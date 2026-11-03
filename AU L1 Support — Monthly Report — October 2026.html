@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AU L1 Support — Monthly Report — October 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --vs-violet:       #4A3CE1;
+    --vs-violet-50:    #A49DF0;
+    --vs-violet-30:    #C9C4F6;
+    --vs-violet-15:    #E4E2FB;
+    --vs-violet-dark:  #221C66;
+    --vs-white:        #FFFFFF;
+    --red:    #EF4444; --red-bg: #FEF2F2;
+    --amber:  #F59E0B; --amber-bg: #FFFBEB;
+    --green:  #10B981; --green-bg: #ECFDF5;
+    --gray-50: #F9FAFB; --gray-100: #F3F4F6; --gray-200: #E5E7EB;
+    --gray-500: #6B7280; --gray-700: #374151; --gray-900: #111827;
+    --vs-font-display: 'Manrope', system-ui, sans-serif;
+    --vs-font-body:    'Inter', system-ui, sans-serif;
+    --ink: #221C66; --surface: #FFFFFF; --grid: #F3F4F6;
+  }
+  :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); background: var(--gray-100); }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--vs-font-body); background: var(--gray-100); color: var(--gray-900); font-size: 14px; line-height: 1.5; }
+
+  .header { background: var(--vs-violet-dark); }
+  .header-inner { max-width: 1400px; margin: 0 auto; padding: 28px 40px 24px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .header-logo { display: flex; align-items: center; gap: 16px; }
+  .header-logo svg { height: 32px; width: auto; }
+  .header-divider { width: 1px; height: 36px; background: rgba(255,255,255,0.25); }
+  .header-title { font-family: var(--vs-font-display); color: var(--vs-white); }
+  .header-title h1 { font-size: 20px; font-weight: 700; line-height: 1.2; letter-spacing: -0.3px; }
+  .header-title p { font-size: 13px; color: var(--vs-violet-30); font-family: var(--vs-font-body); margin-top: 3px; }
+  .header-meta { text-align: right; color: var(--vs-violet-30); font-size: 12px; }
+  .header-meta strong { display: block; color: var(--vs-white); font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+
+  .subnav { background: var(--vs-violet-dark); border-top: 1px solid rgba(255,255,255,0.1); }
+  .subnav-inner { max-width: 1400px; margin: 0 auto; padding: 0 40px; display: flex; gap: 4px; }
+  .tab-btn { padding: 10px 18px; font-family: var(--vs-font-body); font-size: 13px; font-weight: 500; color: var(--vs-violet-30); background: transparent; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: color .15s, border-color .15s; white-space: nowrap; }
+  .tab-btn:hover { color: var(--vs-white); }
+  .tab-btn.active { color: var(--vs-white); border-bottom-color: var(--vs-violet-50); }
+
+  .main { max-width: 1400px; margin: 0 auto; padding: 32px 40px 60px; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .kpi-grid { display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 16px; margin-bottom: 28px; }
+  .kpi-card { background: var(--surface); border-radius: 12px; padding: 20px 20px 16px; border: 1px solid var(--gray-200); position: relative; overflow: hidden; }
+  .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--vs-violet); }
+  .kpi-card.red::before { background: var(--red); }
+  .kpi-card.amber::before { background: var(--amber); }
+  .kpi-card.green::before { background: var(--green); }
+  .kpi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; color: var(--gray-500); margin-bottom: 8px; }
+  .kpi-value { font-family: var(--vs-font-display); font-size: 28px; font-weight: 800; color: var(--ink); line-height: 1; }
+  .kpi-sub { font-size: 12px; color: var(--gray-500); margin-top: 6px; }
+  .badge-red { background: var(--red-bg); color: var(--red); padding: 2px 7px; border-radius: 99px; font-size: 11px; font-weight: 600; display: inline-block; }
+  .badge-amber { background: var(--amber-bg); color: #B45309; padding: 2px 7px; border-radius: 99px; font-size: 11px; font-weight: 600; display: inline-block; }
+  .badge-green { background: var(--green-bg); color: #065F46; padding: 2px 7px; border-radius: 99px; font-size: 11px; font-weight: 600; display: inline-block; }
+  .badge-violet { background: var(--vs-violet-15); color: var(--ink); padding: 2px 7px; border-radius: 99px; font-size: 11px; font-weight: 600; display: inline-block; }
+
+  .section-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px; }
+  .section-head h2 { font-family: var(--vs-font-display); font-size: 16px; font-weight: 700; color: var(--ink); }
+  .section-head .section-sub { font-size: 13px; color: var(--gray-500); }
+
+  .card { background: var(--surface); border-radius: 12px; border: 1px solid var(--gray-200); padding: 24px; margin-bottom: 24px; }
+  .card-title { font-family: var(--vs-font-display); font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .card-title .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--vs-violet); flex-shrink: 0; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+  .grid-60-40 { display: grid; grid-template-columns: 60fr 40fr; gap: 24px; }
+  .grid-55-45 { display: grid; grid-template-columns: 55fr 45fr; gap: 24px; }
+
+  .chart-wrap { position: relative; height: 260px; }
+  .chart-wrap-tall { position: relative; height: 340px; }
+  .chart-wrap-sm { position: relative; height: 200px; }
+
+  .tbl-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th { padding: 8px 12px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--gray-500); border-bottom: 2px solid var(--gray-200); white-space: nowrap; }
+  tbody tr { border-bottom: 1px solid var(--gray-100); transition: background .1s; }
+  tbody tr:hover { background: var(--gray-50); }
+  tbody td { padding: 9px 12px; color: var(--gray-700); vertical-align: middle; }
+  td.name { font-weight: 600; color: var(--gray-900); }
+  td.num { font-variant-numeric: tabular-nums; text-align: right; }
+  td.center { text-align: center; }
+
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+  .pill-red    { background: var(--red-bg); color: var(--red); }
+  .pill-amber  { background: var(--amber-bg); color: #92400E; }
+  .pill-green  { background: var(--green-bg); color: #065F46; }
+  .pill-gray   { background: var(--gray-100); color: var(--gray-500); }
+  .pill-violet { background: var(--vs-violet-15); color: var(--ink); }
+
+  .progress-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .progress-label { width: 170px; font-size: 12px; color: var(--gray-700); flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .progress-bar-wrap { flex: 1; height: 8px; background: var(--gray-100); border-radius: 99px; overflow: hidden; }
+  .progress-bar { height: 100%; border-radius: 99px; background: var(--vs-violet); }
+  .progress-bar.red { background: var(--red); }
+  .progress-bar.amber { background: var(--amber); }
+  .progress-val { width: 44px; text-align: right; font-size: 12px; font-weight: 600; color: var(--gray-700); flex-shrink: 0; }
+
+  .insight-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .insight-card { border-radius: 10px; padding: 16px 18px; border-left: 4px solid; }
+  .insight-card.critical { background: var(--red-bg); border-color: var(--red); }
+  .insight-card.warning  { background: var(--amber-bg); border-color: var(--amber); }
+  .insight-card.info     { background: var(--vs-violet-15); border-color: var(--vs-violet); }
+  .insight-card h4 { font-family: var(--vs-font-display); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+  .insight-card.critical h4 { color: var(--red); }
+  .insight-card.warning  h4 { color: #B45309; }
+  .insight-card.info     h4 { color: var(--vs-violet); }
+  .insight-card p { font-size: 12px; line-height: 1.5; color: var(--gray-700); }
+
+  .action-list { list-style: none; }
+  .action-list li { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--gray-100); align-items: flex-start; }
+  .action-list li:last-child { border-bottom: none; }
+  .action-num { width: 24px; height: 24px; border-radius: 50%; background: var(--vs-violet); color: white; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .action-num.red   { background: var(--red); }
+  .action-num.amber { background: var(--amber); }
+  .action-text strong { display: block; font-size: 13px; font-weight: 600; color: var(--gray-900); margin-bottom: 2px; }
+  .action-text p { font-size: 12px; color: var(--gray-500); line-height: 1.5; }
+
+  .dq-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--gray-100); }
+  .dq-item:last-child { border-bottom: none; }
+  .dq-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--red-bg); color: var(--red); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .dq-icon.amber { background: var(--amber-bg); color: var(--amber); }
+  .dq-desc { flex: 1; }
+  .dq-desc strong { font-size: 13px; font-weight: 600; display: block; color: var(--gray-900); }
+  .dq-desc span { font-size: 12px; color: var(--gray-500); }
+  .dq-count { font-family: var(--vs-font-display); font-size: 18px; font-weight: 800; color: var(--red); }
+  .dq-count.amber { color: var(--amber); }
+
+  .footer-note { margin-top: 32px; padding: 12px 16px; background: var(--vs-violet-15); border-radius: 8px; font-size: 12px; color: var(--ink); display: flex; gap: 8px; align-items: flex-start; }
+
+  @media (max-width: 1100px) {
+    .kpi-grid { grid-template-columns: repeat(3,1fr); }
+    .grid-2, .grid-60-40, .grid-55-45, .grid-3 { grid-template-columns: 1fr; }
+    .insight-grid { grid-template-columns: 1fr; }
+    .main { padding: 20px 16px 40px; }
+    .header-inner { padding: 20px 16px; flex-direction: column; align-items: flex-start; }
+    .subnav-inner { padding: 0 16px; overflow-x: auto; }
+  }
+
+  img { max-width:100%; }
+  .progress-label { width: 210px; }
+  .badge-violet, .pill-violet { color: var(--ink); }
+  .insight-grid.five { grid-template-columns: repeat(3, 1fr); }
+  .tbl-wrap { overflow-x:auto; }
+  .note-sm { font-size:12px; color:var(--gray-500); margin-bottom:14px; }
+  .note-sm strong { color: var(--gray-900); }
+  .month-row td.name { width: 120px; }
+  .delta-up { color: var(--red); font-weight:600; font-size:11px; }
+  .delta-down { color: var(--green); font-weight:600; font-size:11px; }
+  @media (max-width: 640px) {
+    .kpi-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .kpi-value { font-size: 24px; }
+    .progress-label { width: 130px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="header-logo">
+      <svg viewBox="0 0 484 72" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:28px;width:auto;">
+        <g clip-path="url(#hc)">
+          <path d="M483.042 60.77H474.165L462.769 45.39L458.186 50.32V60.77H450.713V11.48H458.186V41.41L463.513 35.4L473.505 24.17H481.969L468.963 38.72L483.042 60.77Z" fill="white"/>
+          <path d="M436.098 49.2H443.241C442.952 51.44 442.209 53.47 441.053 55.26C439.773 57.2 437.998 58.74 435.768 59.86C433.538 60.98 430.855 61.51 427.799 61.51C424.166 61.51 421.028 60.73 418.427 59.11C415.867 57.54 413.844 55.3 412.44 52.52C411.036 49.66 410.334 46.34 410.334 42.61C410.334 38.88 411.077 35.57 412.481 32.71C413.926 29.89 415.908 27.65 418.509 26.07C421.069 24.46 424.207 23.67 427.758 23.67C430.69 23.67 433.332 24.21 435.603 25.29C437.874 26.36 439.69 27.9 441.012 29.85C442.209 31.59 442.952 33.62 443.241 35.9H436.098C435.644 34.16 434.777 32.71 433.538 31.5C432.135 30.14 430.194 29.43 427.882 29.43C425.9 29.43 424.125 30.01 422.638 31.05C421.152 32.13 419.996 33.62 419.17 35.61C418.386 37.51 417.973 39.84 417.973 42.45C417.973 45.06 418.386 47.46 419.17 49.41C419.954 51.4 421.111 52.93 422.597 54.05C424.083 55.13 425.859 55.67 427.882 55.67C429.286 55.67 430.607 55.38 431.722 54.84C432.878 54.26 433.869 53.47 434.612 52.4C435.273 51.52 435.768 50.45 436.098 49.2Z" fill="white"/>
+          <path d="M165.946 11.48L148.646 60.77H138.365L121.065 11.48H129.571L142.577 50.9L144.311 50.9L157.441 11.48H165.946Z" fill="white"/>
+          <path d="M199.6 32.62C198.196 29.76 196.173 27.57 193.572 25.99C190.971 24.46 187.874 23.67 184.323 23.67C180.773 23.67 177.676 24.46 175.075 25.99C172.474 27.57 170.45 29.8 169.005 32.62C167.602 35.44 166.9 38.8 166.9 42.61C166.9 46.43 167.602 49.78 169.005 52.6C170.45 55.38 172.474 57.62 175.075 59.15C177.676 60.73 180.773 61.51 184.323 61.51C187.874 61.51 190.971 60.73 193.572 59.15C196.173 57.62 198.196 55.42 199.6 52.6C201.045 49.74 201.789 46.39 201.789 42.61C201.789 38.84 201.045 35.44 199.6 32.62ZM193.118 49.12C192.416 51.11 191.301 52.77 189.856 53.93C188.411 55.17 186.553 55.79 184.365 55.79C182.176 55.79 180.277 55.17 178.791 53.97C177.346 52.77 176.231 51.11 175.529 49.12C174.827 47.17 174.497 44.98 174.497 42.57C174.497 40.17 174.827 37.97 175.529 36.02C176.231 33.99 177.346 32.37 178.791 31.17C180.277 29.93 182.176 29.31 184.365 29.31C186.553 29.31 188.37 29.93 189.856 31.17C191.301 32.37 192.416 34.03 193.118 36.02C193.82 37.97 194.15 40.17 194.15 42.57C194.15 44.98 193.82 47.17 193.118 49.12Z" fill="white"/>
+          <path d="M216.899 24.17H209.426V60.77H216.899V24.17Z" fill="white"/>
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M220.864 11.24L217.23 17.54H209.922L213.556 11.24H220.864Z" fill="white"/>
+          <path d="M250.26 49.21H257.402C257.113 51.45 256.37 53.48 255.214 55.26C253.934 57.21 252.159 58.74 249.929 59.86C247.7 60.98 245.016 61.52 241.96 61.52C238.327 61.52 235.189 60.73 232.588 59.11C230.028 57.54 228.005 55.3 226.601 52.52C225.197 49.66 224.495 46.35 224.495 42.62C224.495 38.89 225.239 35.57 226.642 32.71C228.087 29.89 230.111 27.65 232.671 26.08C235.23 24.46 238.368 23.67 241.919 23.67C244.851 23.67 247.493 24.21 249.764 25.29C252.035 26.37 253.852 27.9 255.173 29.85C256.37 31.59 257.113 33.62 257.402 35.9H250.26C249.805 34.16 248.938 32.71 247.7 31.51C246.296 30.14 244.355 29.44 242.043 29.44C240.061 29.44 238.286 30.02 236.799 31.05C235.313 32.13 234.157 33.62 233.331 35.61C232.547 37.52 232.134 39.84 232.134 42.45C232.134 45.06 232.547 47.47 233.331 49.41C234.116 51.4 235.272 52.94 236.758 54.06C238.245 55.14 240.02 55.67 242.043 55.67C243.447 55.67 244.768 55.38 245.883 54.85C247.039 54.26 248.03 53.48 248.773 52.4C249.434 51.53 249.929 50.45 250.26 49.21Z" fill="white"/>
+          <path d="M270.696 44.19H297.08V42.16C297.08 38.92 296.625 36.11 295.717 33.78C294.85 31.46 293.653 29.56 292.125 28.06C290.597 26.57 288.822 25.45 286.84 24.75C284.858 24.04 282.711 23.67 280.482 23.67C277.013 23.67 273.958 24.46 271.398 26.03C268.838 27.65 266.815 29.89 265.37 32.71C263.966 35.57 263.223 38.88 263.223 42.7C263.223 46.51 263.966 49.91 265.37 52.73C266.815 55.55 268.838 57.7 271.439 59.23C274.082 60.73 277.261 61.51 280.936 61.51C283.785 61.51 286.345 61.1 288.533 60.23C290.68 59.36 292.497 58.16 293.859 56.58C295.098 55.26 295.965 53.68 296.502 51.91L289.524 51.11C289.111 52.06 288.533 52.89 287.831 53.56C286.964 54.39 285.973 54.97 284.817 55.38C283.702 55.79 282.422 55.96 281.06 55.96C278.995 55.96 277.178 55.5 275.61 54.63C274.041 53.72 272.802 52.4 271.935 50.74C271.233 49.37 270.737 47.75 270.655 45.93V44.19H270.696ZM270.737 38.14C270.903 36.81 271.274 35.57 271.894 34.41C272.719 32.83 273.917 31.59 275.403 30.63C276.889 29.68 278.624 29.18 280.605 29.18C282.422 29.18 284.074 29.64 285.436 30.47C286.84 31.3 287.955 32.46 288.739 33.95C289.524 35.4 289.937 37.02 289.937 38.88V39.59H270.737V38.14Z" fill="white"/>
+          <path d="M340.598 47.26C340.598 50.08 339.896 52.56 338.451 54.68C337.048 56.83 334.942 58.53 332.217 59.73C329.45 60.94 326.065 61.56 322.142 61.56C318.22 61.56 314.999 60.94 312.192 59.78C309.467 58.62 307.278 56.87 305.751 54.68C304.347 52.61 303.521 50.12 303.315 47.22H310.912C311.118 48.83 311.696 50.24 312.605 51.36C313.637 52.65 314.999 53.6 316.651 54.22C318.261 54.84 320.078 55.13 322.101 55.13C324.124 55.13 326.023 54.8 327.592 54.18C329.203 53.52 330.524 52.61 331.432 51.44C332.382 50.24 332.877 48.79 332.919 47.18C332.877 45.68 332.423 44.4 331.556 43.44C330.73 42.49 329.574 41.66 328.129 41.04C326.725 40.46 325.115 39.92 323.257 39.42L317.518 37.93C313.472 36.9 310.251 35.32 307.939 33.25C305.709 31.18 304.595 28.48 304.595 25C304.595 22.18 305.379 19.69 306.866 17.58C308.434 15.47 310.54 13.77 313.224 12.61C315.908 11.4 319.004 10.78 322.431 10.78C325.858 10.78 328.955 11.4 331.556 12.61C334.157 13.77 336.181 15.42 337.667 17.54C338.988 19.4 339.731 21.56 339.896 23.96H332.465C332.093 21.89 331.061 20.23 329.327 19.03C327.51 17.74 325.156 17.12 322.308 17.12C320.284 17.12 318.55 17.41 317.105 18.04C315.619 18.66 314.463 19.53 313.678 20.61C312.852 21.72 312.439 23.01 312.439 24.46C312.439 25.62 312.687 26.7 313.265 27.61C313.802 28.44 314.545 29.19 315.495 29.81C316.362 30.35 317.353 30.8 318.426 31.22C319.459 31.59 320.532 31.88 321.564 32.13L326.313 33.33C328.17 33.79 329.987 34.37 331.68 35.11C333.414 35.82 334.942 36.77 336.304 37.89C337.626 38.97 338.699 40.29 339.442 41.83C340.227 43.36 340.598 45.19 340.598 47.26Z" fill="white"/>
+          <path d="M401.666 30.05C400.799 28.48 399.684 27.24 398.28 26.32C396.877 25.37 395.266 24.71 393.532 24.29C389.279 23.26 384.82 23.5 381.228 24.79C379.164 25.54 377.388 26.66 375.984 28.15C374.705 29.43 373.755 31.01 373.136 32.83L380.072 33.83C380.609 32.62 381.476 31.55 382.673 30.68C384.077 29.6 385.976 29.06 388.33 29.06C390.559 29.06 392.335 29.64 393.573 30.8C394.812 31.96 395.473 33.62 395.473 35.69C395.473 36.94 395.019 37.81 394.151 38.34C393.45 38.8 392.376 39.13 390.848 39.34C389.445 39.51 387.669 39.71 385.44 39.96C383.623 40.17 381.889 40.46 380.196 40.91C378.544 41.33 377.058 41.95 375.737 42.74C374.498 43.53 373.507 44.56 372.764 45.85C372.062 47.13 371.69 48.79 371.69 50.82C371.69 53.14 372.186 55.13 373.218 56.71C374.25 58.28 375.695 59.48 377.471 60.31C379.288 61.14 381.352 61.56 383.664 61.56C385.522 61.56 387.174 61.27 388.536 60.77C389.94 60.23 391.096 59.57 392.004 58.7C392.913 57.87 393.615 56.91 394.151 55.92L394.358 55.55H395.803V60.77H402.946V36.02C402.946 33.62 402.492 31.63 401.666 30.05ZM395.473 47.84C395.473 49.37 395.06 50.82 394.275 52.11C393.532 53.39 392.417 54.47 390.972 55.26C389.568 56 387.876 56.42 385.976 56.42C383.953 56.42 382.26 55.92 380.98 55.01C379.577 54.01 378.833 52.56 378.833 50.66C378.833 49.33 379.205 48.21 379.948 47.38C380.609 46.55 381.558 45.89 382.715 45.43C383.829 45.02 385.068 44.69 386.472 44.48L388.495 44.19C389.362 44.06 390.146 43.94 390.972 43.82C391.757 43.65 392.5 43.48 393.119 43.32C393.862 43.07 394.193 42.9 394.275 42.78L395.473 41.83V47.84Z" fill="white"/>
+          <path d="M358.476 29.68V50.04C358.476 51.44 358.683 52.48 359.096 53.19C359.55 53.97 360.21 54.55 360.954 54.76C362.151 55.26 363.72 55.3 364.876 55.05L366.486 60.65C366.115 60.73 365.702 60.85 365.165 60.98C364.215 61.14 363.183 61.27 362.027 61.31C359.921 61.35 357.981 61.06 356.329 60.36C354.636 59.61 353.357 58.57 352.366 57.12C351.416 55.63 350.962 53.81 350.962 51.53V29.68H345.553V24.13H350.962V15.05H358.476V24.13H369.955L366.775 29.64H358.476V29.68Z" fill="white"/>
+        </g>
+        <path d="M94.1436 0C96.0109 0 97.1727 2.03 96.2287 3.64L85.4616 22.01C84.7388 23.25 83.4162 24.01 81.9864 24.01H56.2031L69.0824 1.99C69.8049 0.76 71.1282 0 72.5589 0H94.1436Z" fill="white"/>
+        <path d="M66.0346 48.01C67.9015 48.01 69.0634 50.04 68.12 51.65L56.9045 70.8C56.4709 71.55 55.6771 72 54.819 72H29.4973C28.6397 72 27.8464 71.55 27.4126 70.81L14.047 48.01L0.715267 25.23C0.274209 24.47 0.274208 23.54 0.715266 22.79L13.3471 1.2C13.7806 0.46 14.5746 0 15.433 0H37.9447C39.8113 0 40.9733 2.03 40.0306 3.64L28.8269 22.79C28.3859 23.54 28.3859 24.47 28.8269 25.23L41.4587 46.82C41.8922 47.56 42.6862 48.01 43.5446 48.01H66.0346Z" fill="white"/>
+        <defs><clipPath id="hc"><rect width="362" height="51" fill="white" transform="translate(121 11)"/></clipPath></defs>
+      </svg>
+      <div class="header-divider"></div>
+      <div class="header-title">
+        <h1>AU L1 Support — Monthly Report — October 2026</h1>
+        <p>October 2026 &middot; October 1 &ndash; 31, 2026 &middot; Performance, Gaps &amp; Improvement Areas</p>
+      </div>
+    </div>
+    <div class="header-meta">
+      <strong>Reporting Period</strong>
+      October 2026 &middot; Data as of 2 Nov 2026
+      <div style="margin-top:4px;">Source: AU Monthly Report – October, VoiceStack brand &middot; 330 tickets &middot; Closure Rate: 87.9%</div>
+    </div>
+  </div>
+  <div class="subnav">
+    <div class="subnav-inner">
+      <button class="tab-btn active" onclick="switchTab('overview', this)">Overview</button>
+      <button class="tab-btn" onclick="switchTab('agents', this)">Agent Performance</button>
+      <button class="tab-btn" onclick="switchTab('accounts', this)">Organisation Risk</button>
+      <button class="tab-btn" onclick="switchTab('workload', this)">Workload &amp; Features</button>
+      <button class="tab-btn" onclick="switchTab('gaps', this)">Gaps &amp; Actions</button>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+
+<!-- ══════════════════ OVERVIEW ══════════════════ -->
+<section id="tab-overview" class="section active">
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Tickets</div>
+      <div class="kpi-value">330</div>
+      <div class="kpi-sub">Created 1&ndash;31 Oct 2026</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Closed w/ Solve Time</div>
+      <div class="kpi-value">290</div>
+      <div class="kpi-sub"><span class="badge-green">87.9% closure rate</span></div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">Open / Pending / Hold</div>
+      <div class="kpi-value">40</div>
+      <div class="kpi-sub"><span class="badge-amber">12.1% backlog rate</span></div>
+    </div>
+    <div class="kpi-card red">
+      <div class="kpi-label">Business Critical</div>
+      <div class="kpi-value">26</div>
+      <div class="kpi-sub"><span class="badge-red">7.9% &middot; P90 9.9 days</span></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Median Resolution*</div>
+      <div class="kpi-value">13.0<span style="font-size:16px;font-weight:500;color:var(--gray-500);">h</span></div>
+      <div class="kpi-sub">P90: 6.3 days &middot; *from created date</div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">Config/Admin Share</div>
+      <div class="kpi-value">56.4<span style="font-size:16px;font-weight:500;color:var(--gray-500);">%</span></div>
+      <div class="kpi-sub"><span class="badge-amber">49.8% of res. time</span></div>
+    </div>
+  </div>
+
+  <div class="insight-grid">
+    <div class="insight-card warning">
+      <h4>40 Tickets Still Open</h4>
+      <p>87.9% of October tickets are closed. The 40 still open are 28 Pending, 8 On Hold and 4 Open; 12 are older than 14 days as of 2 Nov 2026, led by #5153 Tooth savers (On Hold, 31 days). Advaith holds 26 of the 40.</p>
+    </div>
+    <div class="insight-card warning">
+      <h4>Real Issues Have the Biggest Backlog</h4>
+      <p>15 of 66 Real Issue / Incident tickets are still open (22.7%), the highest backlog of any main bucket. Real faults outnumber how-to requests this month — 66 vs. 40.</p>
+    </div>
+    <div class="insight-card info">
+      <h4>Read Resolution Times With Care</h4>
+      <p>The October export has created dates but no times, so resolution is measured from the start of the created day. That adds roughly 8 hrs to every ticket, so absolute hours read high — compare agents, buckets and categories with each other rather than against fixed targets.</p>
+    </div>
+    <div class="insight-card info">
+      <h4>Opportunity — Holiday Calendar Self-Serve</h4>
+      <p>Holiday Calendar is the biggest single driver: 80 tickets (24.2% of the month), all closed. Configuration / Admin is 56.4% of volume and 49.8% of resolution time — repeatable work suited to self-serve.</p>
+    </div>
+    <div class="insight-card critical">
+      <h4>Business Critical Long Tail</h4>
+      <p>26 Business Critical / Phone Impacting tickets (7.9%), 4 still open. P90 is 9.9 days. Devices is the main driver — 15 of the 26, with the Devices feature showing a P90 of 9.3 days.</p>
+    </div>
+    <div class="insight-card info">
+      <h4>Enquiries Run Longest</h4>
+      <p>Only 7 tickets ran past 12.5 days, but they hold 17.7% of all resolution hours. The two longest are Enquiry tickets — #5219 First Choice Dental (22.3 days) and #5211 Norlane Dental (21.6 days). Enquiry overall has a P90 of 18.6 days.</p>
+    </div>
+  </div>
+
+  <div class="grid-60-40">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Weekly Ticket Volume &amp; Open Backlog Trend</div>
+      <div class="chart-wrap"><canvas id="weeklyChart"></canvas></div>
+      <p style="font-size:11px;color:var(--gray-500);margin-top:8px;">Weeks run Monday to Sunday; the first (1&ndash;4 Oct) and last (26&ndash;31 Oct) weeks are partial. Open backlog is shown by the week the ticket was created.</p>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Workload by Bucket</div>
+      <div class="chart-wrap"><canvas id="bucketDonut"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Open Tickets — 40 as of 2 Nov 2026</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Ticket</th><th>Organisation</th><th>Owner</th><th>Status</th><th>Category</th><th>Feature</th><th style="text-align:right">Created</th><th style="text-align:right">Age</th></tr></thead>
+        <tbody id="openTableBody"></tbody>
+      </table>
+    </div>
+    <p class="note-sm" style="margin-top:12px;margin-bottom:0;">Includes Pending and On Hold tickets. A dash means the field hasn't been set yet.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Bucket Summary — Volume, Backlog &amp; Resolution Time</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Bucket</th>
+            <th style="text-align:right">Tickets</th><th style="text-align:right">Closed</th><th style="text-align:right">Open</th>
+            <th style="text-align:right">Backlog %</th><th style="text-align:right">Ticket Share</th><th style="text-align:right">Time Share</th>
+            <th style="text-align:right">Median Res</th><th style="text-align:right">P90 Res</th>
+          </tr>
+        </thead>
+        <tbody id="bucketTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Bucket Breakdown by Agent</div>
+    <p class="note-sm">Real Issue / Incident is the closest thing to "problem-solving" work in this classification — actual faults, errors and device issues. How-to / Clarification / Training is guidance and clarification rather than a fault to fix. Team-wide this month: <strong>66 problem-solving tickets vs. 40 how-to tickets</strong> (1.6 problem-solving tickets for every how-to ticket) — real faults outnumber guidance requests for Advaith (35 vs. 18) and Elsaba (23 vs. 12); Nikhil's mix is the reverse (8 vs. 10).</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Agent</th>
+            <th style="text-align:right">Config/Admin</th>
+            <th style="text-align:right">Real Issue/Incident</th>
+            <th style="text-align:right">Business Critical</th>
+            <th style="text-align:right">How-to/Clarification</th>
+            <th style="text-align:right">Product/Commercial</th>
+            <th style="text-align:right">Unclassified</th>
+            <th style="text-align:right">Total</th>
+          </tr>
+        </thead>
+        <tbody id="bucketAgentTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════════════ AGENTS ══════════════════ -->
+<section id="tab-agents" class="section">
+
+  <div class="insight-grid">
+    <div class="insight-card warning">
+      <h4>Advaith — Highest Load, Biggest Backlog</h4>
+      <p>153 tickets (46.4%) and 39.5% of resolution hours. Median 11.2 hrs, but 26 tickets are still open (17.0%) — 10 of them older than 14 days. He also carries most setup work: 19 of 23 New Config requests.</p>
+    </div>
+    <div class="insight-card critical">
+      <h4>Elsaba Jojo — Slowest Turnaround</h4>
+      <p>120 tickets (36.4%) but 48.0% of resolution hours. Median 32.4 hrs — about three times her peers — and the gap shows in every bucket, including Configuration (30.2h vs. 10.7h and 9.2h). 10 still open.</p>
+    </div>
+    <div class="insight-card info">
+      <h4>Nikhil S Nair — Fastest and Cleanest</h4>
+      <p>57 tickets, median 10.6 hrs and the lowest P90 on the team (4.2 days). Only 4 still open, all created on 30 Oct.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Agent Performance — All Metrics</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Agent</th>
+            <th style="text-align:right">Tickets</th><th style="text-align:right">Closed</th><th style="text-align:right">Open</th>
+            <th style="text-align:right">Backlog %</th><th style="text-align:right">Bus. Critical</th><th style="text-align:right">BC %</th>
+            <th style="text-align:right">Median Res</th><th style="text-align:right">Avg Res</th><th style="text-align:right">P90 Res</th>
+            <th style="text-align:right">Time Share</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="agentTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Median Resolution Hours by Bucket &amp; Agent</div>
+    <p class="note-sm">Shows where each agent's time goes by type of work. Cells above 20 hrs are flagged amber, above 50 hrs red. Durations of 48 hrs or more are shown in days. All values include roughly 8 hrs from measuring from the created date.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Agent</th>
+          <th style="text-align:right">Config/Admin</th><th style="text-align:right">Real Issue/Incident</th><th style="text-align:right">Business Critical</th>
+          <th style="text-align:right">How-to/Clarification</th><th style="text-align:right">Unclassified</th><th style="text-align:right">Product/Commercial</th>
+        </tr></thead>
+        <tbody id="agentBucketMedBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Tickets Handled per Agent</div>
+      <div class="chart-wrap-tall"><canvas id="agentVolumeChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Backlog Rate by Agent (%)</div>
+      <div class="chart-wrap-tall"><canvas id="agentBacklogChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Median Resolution Hours by Agent</div>
+      <div class="chart-wrap-tall"><canvas id="agentMedianChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Business Critical Rate by Agent (%)</div>
+      <div class="chart-wrap-tall"><canvas id="agentCriticalChart"></canvas></div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════════════ ACCOUNTS ══════════════════ -->
+<section id="tab-accounts" class="section">
+
+  <div class="insight-grid">
+    <div class="insight-card info">
+      <h4>Backlog Spread Across 31 Practices</h4>
+      <p>The 40 open tickets sit across 31 practices plus 3 with no Organisation. Voicestack AU has 3; Incredible Smiles, Vogue Dental, Nextsmile and Dentists Of Ivanhoe have 2 each. Small organisations read as high backlog % on a single open ticket.</p>
+    </div>
+    <div class="insight-card warning">
+      <h4>Long-Tail Organisations</h4>
+      <p><strong>First Choice Dental</strong> (7 tickets) averages 7.0 days with a P90 of 15.9 days. <strong>Clarinda clinic</strong> (6 tickets, median 5.3 days) has a Business Critical device ticket On Hold for 24 days, and <strong>Dentists Of Ivanhoe</strong> (7 tickets) has a 4.3-day median with 2 still open.</p>
+    </div>
+    <div class="insight-card info">
+      <h4>Top Organisations Resolve Fast</h4>
+      <p>Dentist 4 Chickens leads with 30 tickets at an 11.2-hr median and a P90 of 34.3 hrs. Affordable Dental (21, 8.6-hr median) and Aesthetik Dental (21, 19.7-hr median) follow.</p>
+    </div>
+  </div>
+
+  <div class="grid-55-45">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Top 15 Organisations by Ticket Volume</div>
+      <div class="chart-wrap-tall" style="height:400px;"><canvas id="accountVolumeChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Backlog Rate — Organisations with Open Tickets</div>
+      <div style="padding-top:4px;" id="accountBacklogBars"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Organisation Risk Table — Top 20 by Volume</div>
+    <p class="note-sm">Excludes the 18 tickets with no Organisation assigned (15 solved, 3 still open).</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Organisation</th>
+            <th style="text-align:right">Tickets</th><th style="text-align:right">Open</th>
+            <th style="text-align:right">Bus. Critical</th><th style="text-align:right">Backlog %</th>
+            <th style="text-align:right">Median Res</th><th style="text-align:right">Avg Res</th><th style="text-align:right">P90 Res</th>
+            <th>Risk</th>
+          </tr>
+        </thead>
+        <tbody id="accountTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════════════ WORKLOAD ══════════════════ -->
+<section id="tab-workload" class="section">
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Long-Tail Tickets — Resolved After More Than 12.5 Days (300 hrs)</div>
+    <p class="note-sm">These 7 tickets are 2% of solved tickets but 17.7% of all resolution hours this month.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Ticket</th><th>Organisation</th><th>Owner</th><th>Bucket</th><th>Category</th><th>Feature</th><th style="text-align:right">Resolution</th></tr></thead>
+        <tbody id="longTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Top 12 Categories by Volume</div>
+      <div class="chart-wrap-tall"><canvas id="requestTypeChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Top 12 Features by Volume</div>
+      <div class="chart-wrap-tall"><canvas id="featureChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Category Detail — Volume, Backlog &amp; Resolution</div>
+    <p class="note-sm">The October report has no detailed Support Request Type field, so Zendesk Category is used here instead.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th style="text-align:right">Tickets</th><th style="text-align:right">Open</th>
+            <th style="text-align:right">Backlog %</th><th style="text-align:right">Median Res</th><th style="text-align:right">P90 Res</th><th style="text-align:right">Time Share</th>
+          </tr>
+        </thead>
+        <tbody id="srtTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Feature Detail — Top 20</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Feature</th><th style="text-align:right">Tickets</th><th style="text-align:right">Open</th><th style="text-align:right">Median Res</th><th style="text-align:right">P90 Res</th></tr></thead>
+          <tbody id="featureTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="dot"></span>Ticket Type</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Type</th><th style="text-align:right">Tickets</th><th style="text-align:right">Open</th><th style="text-align:right">Median Res</th><th style="text-align:right">P90 Res</th></tr></thead>
+          <tbody id="ttypeTableBody"></tbody>
+        </table>
+      </div>
+      <p class="note-sm" style="margin-top:14px;margin-bottom:0;">Medians are similar across ticket types (11.9&ndash;13.9 hrs), but Incident, Problem and Question tickets have longer tails — P90 of 7.0, 6.7 and 7.3 days vs. 5.2 days for Tasks.</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════════════ GAPS & ACTIONS ══════════════════ -->
+<section id="tab-gaps" class="section">
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>Recommended Operating Actions — November 2026</div>
+    <ul class="action-list">
+      <li><div class="action-num amber">1</div><div class="action-text"><strong>Clear the Aged Backlog</strong>
+        <p>12 open tickets are older than 14 days (6 On Hold, 5 Pending, 1 Open) — 10 sit with Advaith. Review every On Hold ticket for a next step and owner, starting with #5153 Tooth savers (31 days) and #5217 Smile Works Dental (26 days).</p></div></li>
+      <li><div class="action-num amber">2</div><div class="action-text"><strong>Review Elsaba's Resolution Time</strong>
+        <p>Elsaba's median is about three times her peers' in every bucket, and she carries 48.0% of resolution hours on 36.4% of tickets. Sample her slowest tickets in QA to see whether time is lost to waiting, handoffs or follow-up gaps.</p></div></li>
+      <li><div class="action-num amber">3</div><div class="action-text"><strong>Close Out Classification Gaps</strong>
+        <p>15 tickets were solved without an Organisation and 1 without a Ticket type (#5166). Make Organisation, Category, Feature and Ticket type mandatory before a ticket can be solved.</p></div></li>
+      <li><div class="action-num">4</div><div class="action-text"><strong>Pilot Holiday Calendar Self-Serve</strong>
+        <p>Holiday Calendar is 80 tickets (24.2%). With Agent setup (45) and Agent App (39), these three features are 164 tickets — 49.7% of October volume.</p></div></li>
+      <li><div class="action-num">5</div><div class="action-text"><strong>Business Critical &amp; Devices</strong>
+        <p>4 Business Critical tickets are still open: #5252 Clarinda clinic (On Hold, 24 days), #5440 Nextsmile, #5448 CND and #5569 First Choice Dental. Review any device ticket open longer than 3 days.</p></div></li>
+      <li><div class="action-num">6</div><div class="action-text"><strong>Integration Tickets</strong>
+        <p>4 of 6 Integration tickets are still open — #5153 Tooth savers, #5234 (no Organisation), #5309 Voicestack AU and #5388 Delacombe Family Dental (DNI Campaigns). Agree an owner and escalation path for third-party waits.</p></div></li>
+    </ul>
+  </div>
+
+  <div class="card">
+      <div class="card-title"><span class="dot"></span>Channel Split</div>
+      <table>
+        <thead><tr><th>Channel</th><th style="text-align:right">Tickets</th><th style="text-align:right">Share</th></tr></thead>
+        <tbody id="channelTableBody"></tbody>
+      </table>
+    </div>
+
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>How to Read This Dashboard</div>
+    <div class="tbl-wrap">
+      <table>
+        <tbody>
+          <tr><td class="name">Resolution time</td><td>Elapsed time from ticket created to solved, including nights, weekends and time waiting on the customer — not agent effort hours. This month it is measured from the start of the created day. Shown in hours below 48 hrs and in days from 48 hrs.</td></tr>
+          <tr><td class="name">Median</td><td>The typical ticket: half resolved faster, half slower. Not affected by a few very long tickets.</td></tr>
+          <tr><td class="name">P90</td><td>90% of tickets were resolved within this time. Shows how long the slowest tickets take.</td></tr>
+          <tr><td class="name">Backlog %</td><td>Share of tickets still Open, Pending or On Hold at the time of the data.</td></tr>
+          <tr><td class="name">Time share</td><td>Share of all resolution hours that a bucket, agent or category accounts for.</td></tr>
+          <tr><td class="name">Configuration / Admin Service</td><td>Setup and change requests — holiday calendars, users, agents, call flows.</td></tr>
+          <tr><td class="name">Real Issue / Incident</td><td>Actual faults or errors that need fixing.</td></tr>
+          <tr><td class="name">Business Critical / Phone Impacting</td><td>Issues stopping or degrading the practice's phones — the severity measure in place of priority. Assigned from Category / Feature and phone-impacting words in the ticket subject (e.g. not ringing, no service, offline).</td></tr>
+          <tr><td class="name">How-to / Clarification / Training</td><td>Guidance and questions rather than a fault to fix.</td></tr>
+          <tr><td class="name">Product / Commercial / Internal</td><td>Integrations, feature requests, billing and internal tickets.</td></tr>
+          <tr><td class="name">Unclassified / Data Gap</td><td>No Category set.</td></tr>
+          <tr><td class="name">Agent status</td><td><strong>Action Needed</strong>: median over 24 hrs or backlog over 20%. <strong>Monitor</strong>: median over 8 hrs, P90 over 7 days, or backlog over 10%. Otherwise <strong>On Track</strong>.</td></tr>
+          <tr><td class="name">Organisation risk</td><td><strong>High</strong>: backlog over 30%. <strong>Med</strong>: backlog over 8% or P90 over 7 days. Otherwise <strong>Low</strong>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    <span>Note:</span>
+    <span>Resolution hours are elapsed time from the start of the ticket's created date to its solved timestamp — not agent effort hours. The October export has no created time, so hours read roughly 8 hrs high on average. The 40 unsolved tickets are excluded from resolution calculations. Merged ticket #5238 and tickets #5143 and #5457 are excluded. Workload buckets follow the Q3 2026 Category / Feature mapping. Source: AU Monthly Report – October (VoiceStack brand), 330 tickets created 1&ndash;31 Oct 2026, one row per ticket.</span>
+  </div>
+
+</section>
+
+</main>
+
+<script>
+const VS='#4A3CE1',VS50='#A49DF0',RED='#EF4444',AMB='#F59E0B',GRN='#10B981';
+const cssVar=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const GRID=cssVar('--grid')||'#F3F4F6';
+
+function switchTab(name, btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+  try { sessionStorage.setItem('octtab', name); } catch(e) {}
+}
+
+// ─── DATA (computed from the AU Monthly Report – October) ──────────────────────
+const openData = [{"id": 5153, "org": "Tooth savers", "owner": "Elsaba Jojo", "status": "On Hold", "cat": "Integration", "feat": "Integrations", "created": "2 Oct", "age": 31.0}, {"id": 5217, "org": "Smile Works Dental", "owner": "Elsaba Jojo", "status": "On Hold", "cat": "Enquiry", "feat": "Click to Call (VS)", "created": "7 Oct", "age": 26.0}, {"id": 5234, "org": "\u2014", "owner": "Advaith", "status": "Open", "cat": "Integration", "feat": "Integrations", "created": "7 Oct", "age": 26.0}, {"id": 5239, "org": "Bayview Dental", "owner": "Advaith", "status": "Pending", "cat": "Incident/Error", "feat": "Missed Calls", "created": "8 Oct", "age": 25.0}, {"id": 5260, "org": "Elevate dental", "owner": "Advaith", "status": "On Hold", "cat": "Concern/Clarification", "feat": "Call Logs", "created": "9 Oct", "age": 24.0}, {"id": 5252, "org": "Clarinda clinic", "owner": "Advaith", "status": "On Hold", "cat": "Incident/Error", "feat": "Devices", "created": "9 Oct", "age": 24.0}, {"id": 5271, "org": "Norlane Dental", "owner": "Advaith", "status": "On Hold", "cat": "Incident/Error", "feat": "Agent App", "created": "12 Oct", "age": 21.0}, {"id": 5309, "org": "Voicestack AU", "owner": "Advaith", "status": "Pending", "cat": "Integration", "feat": "Integrations", "created": "13 Oct", "age": 20.0}, {"id": 5345, "org": "Incredible Smiles", "owner": "Advaith", "status": "Pending", "cat": "New Config request", "feat": "Phone Numbers", "created": "16 Oct", "age": 17.0}, {"id": 5378, "org": "Goodsmile", "owner": "Advaith", "status": "Pending", "cat": "Service Request", "feat": "Configuration", "created": "17 Oct", "age": 16.0}, {"id": 5388, "org": "Delacombe Family Dental", "owner": "Advaith", "status": "Pending", "cat": "Integration", "feat": "DNI Campaigns", "created": "19 Oct", "age": 14.0}, {"id": 5393, "org": "Vogue Dental", "owner": "Advaith", "status": "On Hold", "cat": "Incident/Error", "feat": "Agent App", "created": "19 Oct", "age": 14.0}, {"id": 5423, "org": "Cotton Tree Dental", "owner": "Advaith", "status": "Pending", "cat": "Device", "feat": "Devices", "created": "20 Oct", "age": 13.0}, {"id": 5441, "org": "\u2014", "owner": "Elsaba Jojo", "status": "Pending", "cat": "Service Request", "feat": "Integrations", "created": "21 Oct", "age": 12.0}, {"id": 5440, "org": "Nextsmile", "owner": "Advaith", "status": "Pending", "cat": "Incident/Error", "feat": "Phone Tree", "created": "21 Oct", "age": 12.0}, {"id": 5438, "org": "Dental Design Co", "owner": "Advaith", "status": "Pending", "cat": "User setup & Access", "feat": "Agent App", "created": "21 Oct", "age": 12.0}, {"id": 5454, "org": "Rousehill", "owner": "Advaith", "status": "Pending", "cat": "New Config request", "feat": "Phone Numbers", "created": "22 Oct", "age": 11.0}, {"id": 5448, "org": "CND", "owner": "Advaith", "status": "Pending", "cat": "Incident/Error", "feat": "Devices", "created": "22 Oct", "age": 11.0}, {"id": 5450, "org": "Dentists Of Ivanhoe", "owner": "Advaith", "status": "Pending", "cat": "User setup & Access", "feat": "Agent", "created": "22 Oct", "age": 11.0}, {"id": 5471, "org": "Ipswich dental", "owner": "Advaith", "status": "On Hold", "cat": "\u2014", "feat": "\u2014", "created": "23 Oct", "age": 10.0}, {"id": 5474, "org": "Magical Smiles", "owner": "Advaith", "status": "Pending", "cat": "New Config request", "feat": "Phone Numbers", "created": "23 Oct", "age": 10.0}, {"id": 5490, "org": "North Rocky Dental", "owner": "Advaith", "status": "Pending", "cat": "Incident/Error", "feat": "Agent", "created": "26 Oct", "age": 7.0}, {"id": 5497, "org": "Dentists Of Ivanhoe", "owner": "Elsaba Jojo", "status": "Pending", "cat": "Device", "feat": "Devices", "created": "26 Oct", "age": 7.0}, {"id": 5510, "org": "Affordable Dental", "owner": "Advaith", "status": "Pending", "cat": "Incident/Error", "feat": "Missed Calls", "created": "27 Oct", "age": 6.0}, {"id": 5514, "org": "Vogue Dental", "owner": "Advaith", "status": "On Hold", "cat": "Incident/Error", "feat": "Live Status", "created": "27 Oct", "age": 6.0}, {"id": 5528, "org": "Nowra dentists", "owner": "Advaith", "status": "Pending", "cat": "Incident/Error", "feat": "Agent", "created": "28 Oct", "age": 5.0}, {"id": 5526, "org": "Incredible Smiles", "owner": "Advaith", "status": "Pending", "cat": "User setup & Access", "feat": "Agent", "created": "28 Oct", "age": 5.0}, {"id": 5537, "org": "\u2014", "owner": "Elsaba Jojo", "status": "Pending", "cat": "Service Request", "feat": "Contacts", "created": "28 Oct", "age": 5.0}, {"id": 5555, "org": "T&C", "owner": "Advaith", "status": "Open", "cat": "\u2014", "feat": "\u2014", "created": "29 Oct", "age": 4.0}, {"id": 5559, "org": "Berwick Dental Clinic and Surgery", "owner": "Advaith", "status": "Pending", "cat": "Incident/Error", "feat": "Agent App", "created": "29 Oct", "age": 4.0}, {"id": 5567, "org": "Voicestack AU", "owner": "Elsaba Jojo", "status": "Pending", "cat": "Service Request", "feat": "Sound Clips", "created": "29 Oct", "age": 4.0}, {"id": 5549, "org": "Aesthetik Dental", "owner": "Advaith", "status": "Pending", "cat": "Incident/Error", "feat": "Agent App", "created": "29 Oct", "age": 4.0}, {"id": 5587, "org": "Voicestack AU", "owner": "Nikhil S Nair", "status": "Open", "cat": "\u2014", "feat": "\u2014", "created": "30 Oct", "age": 3.0}, {"id": 5578, "org": "Dental at key", "owner": "Elsaba Jojo", "status": "Pending", "cat": "Incident/Error", "feat": "Call Scoring", "created": "30 Oct", "age": 3.0}, {"id": 5580, "org": "My Implant Dentist", "owner": "Elsaba Jojo", "status": "Pending", "cat": "Incident/Error", "feat": "Agent App", "created": "30 Oct", "age": 3.0}, {"id": 5585, "org": "Hampstead Dental", "owner": "Elsaba Jojo", "status": "Pending", "cat": "Incident/Error", "feat": "Call Logs", "created": "30 Oct", "age": 3.0}, {"id": 5592, "org": "Greendoordental", "owner": "Elsaba Jojo", "status": "Pending", "cat": "New Config request", "feat": "Call Queue", "created": "30 Oct", "age": 3.0}, {"id": 5569, "org": "First Choice Dental", "owner": "Nikhil S Nair", "status": "Pending", "cat": "Device", "feat": "Devices", "created": "30 Oct", "age": 3.0}, {"id": 5573, "org": "Dentist 4 Chickens", "owner": "Nikhil S Nair", "status": "Pending", "cat": "Device", "feat": "Devices", "created": "30 Oct", "age": 3.0}, {"id": 5591, "org": "Nextsmile", "owner": "Nikhil S Nair", "status": "Open", "cat": "How to's", "feat": "Configuration", "created": "30 Oct", "age": 3.0}];
+const longData = [{"id": 5219, "org": "First Choice Dental", "owner": "Nikhil S Nair", "bucket": "How-to / Clarification / Training", "cat": "Enquiry", "feat": "Internal Calls", "days": 22.3}, {"id": 5211, "org": "Norlane Dental", "owner": "Elsaba Jojo", "bucket": "How-to / Clarification / Training", "cat": "Enquiry", "feat": "Workflow Rules", "days": 21.6}, {"id": 5278, "org": "Dental Design Co", "owner": "Advaith", "bucket": "Business Critical / Phone Impacting", "cat": "Incident/Error", "feat": "Call Logs", "days": 14.4}, {"id": 5267, "org": "The Grove Dental", "owner": "Advaith", "bucket": "Configuration / Admin Service", "cat": "User setup & Access", "feat": "Devices", "days": 14.4}, {"id": 5209, "org": "Incredible Smiles", "owner": "Advaith", "bucket": "Configuration / Admin Service", "cat": "New Config request", "feat": "Phone Tree", "days": 14.3}, {"id": 5356, "org": "Dentist 4 Chickens", "owner": "Elsaba Jojo", "bucket": "Configuration / Admin Service", "cat": "User setup & Access", "feat": "Agent", "days": 13.6}, {"id": 5286, "org": "Harris Dental Boutique", "owner": "Advaith", "bucket": "Real Issue / Incident", "cat": "Incident/Error", "feat": "Agent", "days": 13.4}];
+const agentData = [{"name": "Advaith", "tickets": 153, "closed": 127, "open": 26, "backlog": 17.0, "bc": 12, "bcRate": 7.8, "medRes": 11.2, "avgRes": 48.1, "p90Res": 135.2, "totRes": 6103, "timeShare": 39.5, "share": 46.4}, {"name": "Elsaba Jojo", "tickets": 120, "closed": 110, "open": 10, "backlog": 8.3, "bc": 9, "bcRate": 7.5, "medRes": 32.4, "avgRes": 67.4, "p90Res": 159.9, "totRes": 7419, "timeShare": 48.0, "share": 36.4}, {"name": "Nikhil S Nair", "tickets": 57, "closed": 53, "open": 4, "backlog": 7.0, "bc": 5, "bcRate": 8.8, "medRes": 10.6, "avgRes": 36.3, "p90Res": 100.9, "totRes": 1926, "timeShare": 12.5, "share": 17.3}];
+const accountData = [{"name": "Dentist 4 Chickens", "tickets": 30, "closed": 29, "open": 1, "backlog": 3.3, "bc": 2, "bcRate": 6.7, "medRes": 11.2, "avgRes": 25.4, "p90Res": 34.3, "totRes": 738, "timeShare": 4.8, "share": 9.1}, {"name": "Aesthetik Dental", "tickets": 21, "closed": 20, "open": 1, "backlog": 4.8, "bc": 0, "bcRate": 0.0, "medRes": 19.7, "avgRes": 44.8, "p90Res": 126.1, "totRes": 896, "timeShare": 5.8, "share": 6.4}, {"name": "Affordable Dental", "tickets": 21, "closed": 20, "open": 1, "backlog": 4.8, "bc": 0, "bcRate": 0.0, "medRes": 8.6, "avgRes": 29.8, "p90Res": 63.6, "totRes": 595, "timeShare": 3.9, "share": 6.4}, {"name": "Incredible Smiles", "tickets": 11, "closed": 9, "open": 2, "backlog": 18.2, "bc": 0, "bcRate": 0.0, "medRes": 13.9, "avgRes": 54.5, "p90Res": 117.8, "totRes": 490, "timeShare": 3.2, "share": 3.3}, {"name": "My Implant Dentist", "tickets": 9, "closed": 8, "open": 1, "backlog": 11.1, "bc": 0, "bcRate": 0.0, "medRes": 12.0, "avgRes": 44.8, "p90Res": 132.0, "totRes": 358, "timeShare": 2.3, "share": 2.7}, {"name": "FDW", "tickets": 8, "closed": 8, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 10.7, "avgRes": 14.1, "p90Res": 31.2, "totRes": 113, "timeShare": 0.7, "share": 2.4}, {"name": "Dentists Of Ivanhoe", "tickets": 7, "closed": 5, "open": 2, "backlog": 28.6, "bc": 0, "bcRate": 0.0, "medRes": 103.7, "avgRes": 76.5, "p90Res": 129.9, "totRes": 382, "timeShare": 2.5, "share": 2.1}, {"name": "First Choice Dental", "tickets": 7, "closed": 6, "open": 1, "backlog": 14.3, "bc": 1, "bcRate": 14.3, "medRes": 111.2, "avgRes": 167.3, "p90Res": 382.4, "totRes": 1004, "timeShare": 6.5, "share": 2.1}, {"name": "Clarinda clinic", "tickets": 6, "closed": 5, "open": 1, "backlog": 16.7, "bc": 2, "bcRate": 33.3, "medRes": 127.5, "avgRes": 117.9, "p90Res": 215.8, "totRes": 589, "timeShare": 3.8, "share": 1.8}, {"name": "Delight Dental Spa", "tickets": 6, "closed": 6, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 10.9, "avgRes": 35.3, "p90Res": 88.5, "totRes": 212, "timeShare": 1.4, "share": 1.8}, {"name": "Dental Design Co", "tickets": 6, "closed": 5, "open": 1, "backlog": 16.7, "bc": 1, "bcRate": 16.7, "medRes": 8.1, "avgRes": 75.6, "p90Res": 213.0, "totRes": 378, "timeShare": 2.4, "share": 1.8}, {"name": "Nextsmile", "tickets": 6, "closed": 4, "open": 2, "backlog": 33.3, "bc": 1, "bcRate": 16.7, "medRes": 58.4, "avgRes": 71.3, "p90Res": 135.8, "totRes": 285, "timeShare": 1.8, "share": 1.8}, {"name": "Collins street", "tickets": 5, "closed": 5, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 28.3, "avgRes": 28.8, "p90Res": 37.4, "totRes": 144, "timeShare": 0.9, "share": 1.5}, {"name": "Hampstead Dental", "tickets": 5, "closed": 4, "open": 1, "backlog": 20.0, "bc": 1, "bcRate": 20.0, "medRes": 16.7, "avgRes": 70.7, "p90Res": 178.8, "totRes": 283, "timeShare": 1.8, "share": 1.5}, {"name": "Ipswich dental", "tickets": 5, "closed": 4, "open": 1, "backlog": 20.0, "bc": 0, "bcRate": 0.0, "medRes": 12.3, "avgRes": 17.0, "p90Res": 29.2, "totRes": 68, "timeShare": 0.4, "share": 1.5}, {"name": "Rousehill", "tickets": 5, "closed": 4, "open": 1, "backlog": 20.0, "bc": 0, "bcRate": 0.0, "medRes": 5.8, "avgRes": 29.6, "p90Res": 73.9, "totRes": 119, "timeShare": 0.8, "share": 1.5}, {"name": "Today's Dentistry", "tickets": 5, "closed": 5, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 82.7, "avgRes": 99.6, "p90Res": 183.0, "totRes": 498, "timeShare": 3.2, "share": 1.5}, {"name": "Vogue Dental", "tickets": 5, "closed": 3, "open": 2, "backlog": 40.0, "bc": 0, "bcRate": 0.0, "medRes": 106.7, "avgRes": 113.0, "p90Res": 197.1, "totRes": 339, "timeShare": 2.2, "share": 1.5}, {"name": "Dental at joondalup", "tickets": 4, "closed": 4, "open": 0, "backlog": 0.0, "bc": 1, "bcRate": 25.0, "medRes": 11.2, "avgRes": 40.1, "p90Res": 93.3, "totRes": 161, "timeShare": 1.0, "share": 1.2}, {"name": "Dentist On Victoria", "tickets": 4, "closed": 4, "open": 0, "backlog": 0.0, "bc": 1, "bcRate": 25.0, "medRes": 18.9, "avgRes": 18.7, "p90Res": 29.6, "totRes": 75, "timeShare": 0.5, "share": 1.2}, {"name": "Smile Works Dental", "tickets": 4, "closed": 3, "open": 1, "backlog": 25.0, "bc": 1, "bcRate": 25.0, "medRes": 9.0, "avgRes": 8.5, "p90Res": 9.4, "totRes": 25, "timeShare": 0.2, "share": 1.2}, {"name": "Snowy dental", "tickets": 4, "closed": 4, "open": 0, "backlog": 0.0, "bc": 1, "bcRate": 25.0, "medRes": 11.0, "avgRes": 10.0, "p90Res": 13.6, "totRes": 40, "timeShare": 0.3, "share": 1.2}, {"name": "VIP Dental", "tickets": 4, "closed": 4, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 32.2, "avgRes": 42.2, "p90Res": 87.9, "totRes": 169, "timeShare": 1.1, "share": 1.2}, {"name": "Voicestack AU", "tickets": 4, "closed": 1, "open": 3, "backlog": 75.0, "bc": 0, "bcRate": 0.0, "medRes": 9.9, "avgRes": 9.9, "p90Res": 9.9, "totRes": 10, "timeShare": 0.1, "share": 1.2}, {"name": "Dental Couture", "tickets": 3, "closed": 3, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 27.1, "avgRes": 61.4, "p90Res": 122.9, "totRes": 184, "timeShare": 1.2, "share": 0.9}, {"name": "Dental at key", "tickets": 3, "closed": 2, "open": 1, "backlog": 33.3, "bc": 0, "bcRate": 0.0, "medRes": 73.2, "avgRes": 73.2, "p90Res": 122.2, "totRes": 146, "timeShare": 0.9, "share": 0.9}, {"name": "Dntlcode", "tickets": 3, "closed": 3, "open": 0, "backlog": 0.0, "bc": 2, "bcRate": 66.7, "medRes": 37.2, "avgRes": 29.5, "p90Res": 38.0, "totRes": 88, "timeShare": 0.6, "share": 0.9}, {"name": "East Ivanhoe Dental", "tickets": 3, "closed": 3, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 11.3, "avgRes": 27.4, "p90Res": 50.6, "totRes": 82, "timeShare": 0.5, "share": 0.9}, {"name": "Elevate dental", "tickets": 3, "closed": 2, "open": 1, "backlog": 33.3, "bc": 0, "bcRate": 0.0, "medRes": 130.9, "avgRes": 130.9, "p90Res": 209.7, "totRes": 262, "timeShare": 1.7, "share": 0.9}, {"name": "Juric Group", "tickets": 3, "closed": 3, "open": 0, "backlog": 0.0, "bc": 1, "bcRate": 33.3, "medRes": 11.4, "avgRes": 32.3, "p90Res": 62.9, "totRes": 97, "timeShare": 0.6, "share": 0.9}, {"name": "Launceston Dental", "tickets": 3, "closed": 3, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 10.6, "avgRes": 16.0, "p90Res": 23.5, "totRes": 48, "timeShare": 0.3, "share": 0.9}, {"name": "Norlane Dental", "tickets": 3, "closed": 2, "open": 1, "backlog": 33.3, "bc": 0, "bcRate": 0.0, "medRes": 336.2, "avgRes": 336.2, "p90Res": 481.5, "totRes": 672, "timeShare": 4.4, "share": 0.9}, {"name": "Sea breeze", "tickets": 3, "closed": 3, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 14.7, "avgRes": 25.6, "p90Res": 44.1, "totRes": 77, "timeShare": 0.5, "share": 0.9}, {"name": "Sensational Smiles", "tickets": 3, "closed": 3, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 12.9, "avgRes": 27.6, "p90Res": 52.7, "totRes": 83, "timeShare": 0.5, "share": 0.9}, {"name": "T&C", "tickets": 3, "closed": 2, "open": 1, "backlog": 33.3, "bc": 1, "bcRate": 33.3, "medRes": 11.8, "avgRes": 11.8, "p90Res": 12.6, "totRes": 24, "timeShare": 0.2, "share": 0.9}, {"name": "Timeless smile", "tickets": 3, "closed": 3, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 10.4, "avgRes": 10.0, "p90Res": 11.6, "totRes": 30, "timeShare": 0.2, "share": 0.9}, {"name": "Bayview Dental", "tickets": 2, "closed": 1, "open": 1, "backlog": 50.0, "bc": 0, "bcRate": 0.0, "medRes": 34.0, "avgRes": 34.0, "p90Res": 34.0, "totRes": 34, "timeShare": 0.2, "share": 0.6}, {"name": "Berwick smiles", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 7.0, "avgRes": 7.0, "p90Res": 8.8, "totRes": 14, "timeShare": 0.1, "share": 0.6}, {"name": "Bluffpointdental", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 44.9, "avgRes": 44.9, "p90Res": 71.7, "totRes": 90, "timeShare": 0.6, "share": 0.6}, {"name": "Choice Dental", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 52.9, "avgRes": 52.9, "p90Res": 90.9, "totRes": 106, "timeShare": 0.7, "share": 0.6}, {"name": "Cockatoo dental", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 1, "bcRate": 50.0, "medRes": 8.2, "avgRes": 8.2, "p90Res": 9.0, "totRes": 16, "timeShare": 0.1, "share": 0.6}, {"name": "Cotton Tree Dental", "tickets": 2, "closed": 1, "open": 1, "backlog": 50.0, "bc": 0, "bcRate": 0.0, "medRes": 9.2, "avgRes": 9.2, "p90Res": 9.2, "totRes": 9, "timeShare": 0.1, "share": 0.6}, {"name": "Dental south", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 57.3, "avgRes": 57.3, "p90Res": 100.2, "totRes": 115, "timeShare": 0.7, "share": 0.6}, {"name": "Glenroy Dental Group", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 1, "bcRate": 50.0, "medRes": 4.6, "avgRes": 4.6, "p90Res": 5.2, "totRes": 9, "timeShare": 0.1, "share": 0.6}, {"name": "Goodsmile", "tickets": 2, "closed": 1, "open": 1, "backlog": 50.0, "bc": 0, "bcRate": 0.0, "medRes": 34.2, "avgRes": 34.2, "p90Res": 34.2, "totRes": 34, "timeShare": 0.2, "share": 0.6}, {"name": "Greendoordental", "tickets": 2, "closed": 1, "open": 1, "backlog": 50.0, "bc": 0, "bcRate": 0.0, "medRes": 200.6, "avgRes": 200.6, "p90Res": 200.6, "totRes": 201, "timeShare": 1.3, "share": 0.6}, {"name": "Harris Dental Boutique", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 167.8, "avgRes": 167.8, "p90Res": 291.4, "totRes": 336, "timeShare": 2.2, "share": 0.6}, {"name": "Islington Dental", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 45.4, "avgRes": 45.4, "p90Res": 75.2, "totRes": 91, "timeShare": 0.6, "share": 0.6}, {"name": "Live life smiling", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 1, "bcRate": 50.0, "medRes": 13.2, "avgRes": 13.2, "p90Res": 14.2, "totRes": 26, "timeShare": 0.2, "share": 0.6}, {"name": "North Rocky Dental", "tickets": 2, "closed": 1, "open": 1, "backlog": 50.0, "bc": 0, "bcRate": 0.0, "medRes": 229.4, "avgRes": 229.4, "p90Res": 229.4, "totRes": 229, "timeShare": 1.5, "share": 0.6}, {"name": "Northshore Dental", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 10.2, "avgRes": 10.2, "p90Res": 11.1, "totRes": 20, "timeShare": 0.1, "share": 0.6}, {"name": "Nowra dentists", "tickets": 2, "closed": 1, "open": 1, "backlog": 50.0, "bc": 0, "bcRate": 0.0, "medRes": 4.4, "avgRes": 4.4, "p90Res": 4.4, "totRes": 4, "timeShare": 0.0, "share": 0.6}, {"name": "Platinum Dental", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 129.1, "avgRes": 129.1, "p90Res": 149.5, "totRes": 258, "timeShare": 1.7, "share": 0.6}, {"name": "Pomare Dental", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 1, "bcRate": 50.0, "medRes": 6.9, "avgRes": 6.9, "p90Res": 8.0, "totRes": 14, "timeShare": 0.1, "share": 0.6}, {"name": "Prakhyadental", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 44.1, "avgRes": 44.1, "p90Res": 74.1, "totRes": 88, "timeShare": 0.6, "share": 0.6}, {"name": "Southern Dental", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 11.7, "avgRes": 11.7, "p90Res": 12.7, "totRes": 23, "timeShare": 0.2, "share": 0.6}, {"name": "The Point Dental", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 80.1, "avgRes": 80.1, "p90Res": 134.0, "totRes": 160, "timeShare": 1.0, "share": 0.6}, {"name": "Total Care Dental", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 97.5, "avgRes": 97.5, "p90Res": 165.5, "totRes": 195, "timeShare": 1.3, "share": 0.6}, {"name": "Victorian Dental Group", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 4.7, "avgRes": 4.7, "p90Res": 4.9, "totRes": 9, "timeShare": 0.1, "share": 0.6}, {"name": "Bacchus Marsh Dental House", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 81.8, "avgRes": 81.8, "p90Res": 81.8, "totRes": 82, "timeShare": 0.5, "share": 0.3}, {"name": "Bec dental", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 99.8, "avgRes": 99.8, "p90Res": 99.8, "totRes": 100, "timeShare": 0.6, "share": 0.3}, {"name": "Berwick Dental Clinic and Surgery", "tickets": 1, "closed": 0, "open": 1, "backlog": 100.0, "bc": 0, "bcRate": 0.0, "medRes": null, "avgRes": null, "p90Res": null, "totRes": 0, "timeShare": 0.0, "share": 0.3}, {"name": "Bulleen Dental", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 79.3, "avgRes": 79.3, "p90Res": 79.3, "totRes": 79, "timeShare": 0.5, "share": 0.3}, {"name": "Burnside Dental", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 12.8, "avgRes": 12.8, "p90Res": 12.8, "totRes": 13, "timeShare": 0.1, "share": 0.3}, {"name": "CND", "tickets": 1, "closed": 0, "open": 1, "backlog": 100.0, "bc": 1, "bcRate": 100.0, "medRes": null, "avgRes": null, "p90Res": null, "totRes": 0, "timeShare": 0.0, "share": 0.3}, {"name": "Camberwell Junction Dental", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 79.1, "avgRes": 79.1, "p90Res": 79.1, "totRes": 79, "timeShare": 0.5, "share": 0.3}, {"name": "Centre for Prosthodontics", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 103.5, "avgRes": 103.5, "p90Res": 103.5, "totRes": 103, "timeShare": 0.7, "share": 0.3}, {"name": "Clarity Dental", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 99.5, "avgRes": 99.5, "p90Res": 99.5, "totRes": 99, "timeShare": 0.6, "share": 0.3}, {"name": "Delacombe Family Dental", "tickets": 1, "closed": 0, "open": 1, "backlog": 100.0, "bc": 0, "bcRate": 0.0, "medRes": null, "avgRes": null, "p90Res": null, "totRes": 0, "timeShare": 0.0, "share": 0.3}, {"name": "Devonport Dental Care", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 4.7, "avgRes": 4.7, "p90Res": 4.7, "totRes": 5, "timeShare": 0.0, "share": 0.3}, {"name": "Endeavour Smiles", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 109.1, "avgRes": 109.1, "p90Res": 109.1, "totRes": 109, "timeShare": 0.7, "share": 0.3}, {"name": "Epping Family Dental", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 10.8, "avgRes": 10.8, "p90Res": 10.8, "totRes": 11, "timeShare": 0.1, "share": 0.3}, {"name": "Forest Road Dental", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 1, "bcRate": 100.0, "medRes": 175.7, "avgRes": 175.7, "p90Res": 175.7, "totRes": 176, "timeShare": 1.1, "share": 0.3}, {"name": "Glenroy smiles dental", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 1, "bcRate": 100.0, "medRes": 270.1, "avgRes": 270.1, "p90Res": 270.1, "totRes": 270, "timeShare": 1.7, "share": 0.3}, {"name": "Holdsworth", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 12.9, "avgRes": 12.9, "p90Res": 12.9, "totRes": 13, "timeShare": 0.1, "share": 0.3}, {"name": "Kids smile", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 3.5, "avgRes": 3.5, "p90Res": 3.5, "totRes": 3, "timeShare": 0.0, "share": 0.3}, {"name": "Lifestyle Smiles", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 62.7, "avgRes": 62.7, "p90Res": 62.7, "totRes": 63, "timeShare": 0.4, "share": 0.3}, {"name": "Magical Smiles", "tickets": 1, "closed": 0, "open": 1, "backlog": 100.0, "bc": 0, "bcRate": 0.0, "medRes": null, "avgRes": null, "p90Res": null, "totRes": 0, "timeShare": 0.0, "share": 0.3}, {"name": "Matestreet dental clinic", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 10.9, "avgRes": 10.9, "p90Res": 10.9, "totRes": 11, "timeShare": 0.1, "share": 0.3}, {"name": "Mediboost", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 109.1, "avgRes": 109.1, "p90Res": 109.1, "totRes": 109, "timeShare": 0.7, "share": 0.3}, {"name": "Melton Dental House", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 1, "bcRate": 100.0, "medRes": 11.1, "avgRes": 11.1, "p90Res": 11.1, "totRes": 11, "timeShare": 0.1, "share": 0.3}, {"name": "Morningside 621 Dental Surgery", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 33.9, "avgRes": 33.9, "p90Res": 33.9, "totRes": 34, "timeShare": 0.2, "share": 0.3}, {"name": "Nest Dental", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 78.9, "avgRes": 78.9, "p90Res": 78.9, "totRes": 79, "timeShare": 0.5, "share": 0.3}, {"name": "Parramatta Green Dental", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 99.3, "avgRes": 99.3, "p90Res": 99.3, "totRes": 99, "timeShare": 0.6, "share": 0.3}, {"name": "Precision dental care", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 132.8, "avgRes": 132.8, "p90Res": 132.8, "totRes": 133, "timeShare": 0.9, "share": 0.3}, {"name": "Seabreeze Dental", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 35.1, "avgRes": 35.1, "p90Res": 35.1, "totRes": 35, "timeShare": 0.2, "share": 0.3}, {"name": "Smiles on Chapel", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 6.2, "avgRes": 6.2, "p90Res": 6.2, "totRes": 6, "timeShare": 0.0, "share": 0.3}, {"name": "Supa Dental", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 14.1, "avgRes": 14.1, "p90Res": 14.1, "totRes": 14, "timeShare": 0.1, "share": 0.3}, {"name": "Superiorsmiles", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 127.0, "avgRes": 127.0, "p90Res": 127.0, "totRes": 127, "timeShare": 0.8, "share": 0.3}, {"name": "Swan Hill Smiles", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 4.6, "avgRes": 4.6, "p90Res": 4.6, "totRes": 5, "timeShare": 0.0, "share": 0.3}, {"name": "The Grove Dental", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 346.1, "avgRes": 346.1, "p90Res": 346.1, "totRes": 346, "timeShare": 2.2, "share": 0.3}, {"name": "The Ruthy Clinic", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 12.1, "avgRes": 12.1, "p90Res": 12.1, "totRes": 12, "timeShare": 0.1, "share": 0.3}, {"name": "Tooth Sparkler", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 28.4, "avgRes": 28.4, "p90Res": 28.4, "totRes": 28, "timeShare": 0.2, "share": 0.3}, {"name": "Tooth savers", "tickets": 1, "closed": 0, "open": 1, "backlog": 100.0, "bc": 0, "bcRate": 0.0, "medRes": null, "avgRes": null, "p90Res": null, "totRes": 0, "timeShare": 0.0, "share": 0.3}, {"name": "Waverley Road Dental", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 158.1, "avgRes": 158.1, "p90Res": 158.1, "totRes": 158, "timeShare": 1.0, "share": 0.3}, {"name": "Western Periodontics", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 8.9, "avgRes": 8.9, "p90Res": 8.9, "totRes": 9, "timeShare": 0.1, "share": 0.3}, {"name": "Whittlesea Smiles", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 75.1, "avgRes": 75.1, "p90Res": 75.1, "totRes": 75, "timeShare": 0.5, "share": 0.3}];
+const bucketData = [{"name": "Configuration / Admin Service", "tickets": 186, "closed": 175, "open": 11, "backlog": 5.9, "bc": 0, "bcRate": 0.0, "medRes": 12.8, "avgRes": 43.9, "p90Res": 125.9, "totRes": 7687, "timeShare": 49.8, "share": 56.4}, {"name": "Real Issue / Incident", "tickets": 66, "closed": 51, "open": 15, "backlog": 22.7, "bc": 0, "bcRate": 0.0, "medRes": 13.3, "avgRes": 59.5, "p90Res": 158.1, "totRes": 3035, "timeShare": 19.6, "share": 20.0}, {"name": "Business Critical / Phone Impacting", "tickets": 26, "closed": 22, "open": 4, "backlog": 15.4, "bc": 26, "bcRate": 100.0, "medRes": 12.7, "avgRes": 69.4, "p90Res": 237.2, "totRes": 1527, "timeShare": 9.9, "share": 7.9}, {"name": "How-to / Clarification / Training", "tickets": 40, "closed": 37, "open": 3, "backlog": 7.5, "bc": 0, "bcRate": 0.0, "medRes": 26.7, "avgRes": 78.6, "p90Res": 198.6, "totRes": 2909, "timeShare": 18.8, "share": 12.1}, {"name": "Unclassified / Data Gap", "tickets": 3, "closed": 0, "open": 3, "backlog": 100.0, "bc": 0, "bcRate": 0.0, "medRes": null, "avgRes": null, "p90Res": null, "totRes": 0, "timeShare": 0.0, "share": 0.9}, {"name": "Product / Commercial / Internal", "tickets": 9, "closed": 5, "open": 4, "backlog": 44.4, "bc": 0, "bcRate": 0.0, "medRes": 75.1, "avgRes": 58.2, "p90Res": 104.7, "totRes": 291, "timeShare": 1.9, "share": 2.7}];
+const categoryData = [{"name": "Service Request", "tickets": 126, "closed": 122, "open": 4, "backlog": 3.2, "bc": 0, "bcRate": 0.0, "medRes": 12.8, "avgRes": 37.5, "p90Res": 103.5, "totRes": 4575, "timeShare": 29.6, "share": 38.2}, {"name": "Incident/Error", "tickets": 76, "closed": 61, "open": 15, "backlog": 19.7, "bc": 20, "bcRate": 26.3, "medRes": 12.8, "avgRes": 65.6, "p90Res": 172.1, "totRes": 4000, "timeShare": 25.9, "share": 23.0}, {"name": "User setup & Access", "tickets": 37, "closed": 34, "open": 3, "backlog": 8.1, "bc": 0, "bcRate": 0.0, "medRes": 14.1, "avgRes": 57.9, "p90Res": 147.2, "totRes": 1967, "timeShare": 12.7, "share": 11.2}, {"name": "New Config request", "tickets": 23, "closed": 19, "open": 4, "backlog": 17.4, "bc": 0, "bcRate": 0.0, "medRes": 11.9, "avgRes": 60.3, "p90Res": 147.7, "totRes": 1145, "timeShare": 7.4, "share": 7.0}, {"name": "Concern/Clarification", "tickets": 20, "closed": 19, "open": 1, "backlog": 5.0, "bc": 0, "bcRate": 0.0, "medRes": 14.0, "avgRes": 53.2, "p90Res": 146.1, "totRes": 1011, "timeShare": 6.5, "share": 6.1}, {"name": "Device", "tickets": 15, "closed": 11, "open": 4, "backlog": 26.7, "bc": 6, "bcRate": 40.0, "medRes": 13.1, "avgRes": 41.2, "p90Res": 149.9, "totRes": 453, "timeShare": 2.9, "share": 4.5}, {"name": "Enquiry", "tickets": 14, "closed": 13, "open": 1, "backlog": 7.1, "bc": 0, "bcRate": 0.0, "medRes": 27.1, "avgRes": 123.3, "p90Res": 445.2, "totRes": 1603, "timeShare": 10.4, "share": 4.2}, {"name": "Integration", "tickets": 6, "closed": 2, "open": 4, "backlog": 66.7, "bc": 0, "bcRate": 0.0, "medRes": 42.2, "avgRes": 42.2, "p90Res": 68.9, "totRes": 84, "timeShare": 0.5, "share": 1.8}, {"name": "How to's", "tickets": 5, "closed": 4, "open": 1, "backlog": 20.0, "bc": 0, "bcRate": 0.0, "medRes": 5.6, "avgRes": 54.5, "p90Res": 144.1, "totRes": 218, "timeShare": 1.4, "share": 1.5}, {"name": "Internal", "tickets": 3, "closed": 3, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 75.1, "avgRes": 68.8, "p90Res": 114.4, "totRes": 207, "timeShare": 1.3, "share": 0.9}, {"name": "Training/Walkthrough", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 75.7, "avgRes": 75.7, "p90Res": 75.7, "totRes": 76, "timeShare": 0.5, "share": 0.3}, {"name": "Twilio Ops", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 109.1, "avgRes": 109.1, "p90Res": 109.1, "totRes": 109, "timeShare": 0.7, "share": 0.3}, {"name": "(Blank)", "tickets": 3, "closed": 0, "open": 3, "backlog": 100.0, "bc": 0, "bcRate": 0.0, "medRes": null, "avgRes": null, "p90Res": null, "totRes": 0, "timeShare": 0.0, "share": 0.9}];
+const featureData = [{"name": "Holiday Calendar", "tickets": 80, "closed": 80, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 10.7, "avgRes": 21.8, "p90Res": 75.9, "totRes": 1748, "timeShare": 11.3, "share": 24.2}, {"name": "Agent", "tickets": 45, "closed": 41, "open": 4, "backlog": 8.9, "bc": 0, "bcRate": 0.0, "medRes": 14.4, "avgRes": 55.2, "p90Res": 195.4, "totRes": 2261, "timeShare": 14.6, "share": 13.6}, {"name": "Agent App", "tickets": 39, "closed": 33, "open": 6, "backlog": 15.4, "bc": 1, "bcRate": 2.6, "medRes": 12.3, "avgRes": 35.0, "p90Res": 109.4, "totRes": 1154, "timeShare": 7.5, "share": 11.8}, {"name": "Devices", "tickets": 30, "closed": 24, "open": 6, "backlog": 20.0, "bc": 15, "bcRate": 50.0, "medRes": 12.9, "avgRes": 64.9, "p90Res": 223.5, "totRes": 1557, "timeShare": 10.1, "share": 9.1}, {"name": "Call Logs", "tickets": 19, "closed": 17, "open": 2, "backlog": 10.5, "bc": 2, "bcRate": 10.5, "medRes": 54.0, "avgRes": 102.5, "p90Res": 239.9, "totRes": 1743, "timeShare": 11.3, "share": 5.8}, {"name": "Configuration", "tickets": 16, "closed": 14, "open": 2, "backlog": 12.5, "bc": 0, "bcRate": 0.0, "medRes": 55.0, "avgRes": 70.0, "p90Res": 152.1, "totRes": 980, "timeShare": 6.3, "share": 4.8}, {"name": "Missed Calls", "tickets": 12, "closed": 10, "open": 2, "backlog": 16.7, "bc": 1, "bcRate": 8.3, "medRes": 101.2, "avgRes": 81.9, "p90Res": 155.0, "totRes": 819, "timeShare": 5.3, "share": 3.6}, {"name": "Phone Numbers", "tickets": 11, "closed": 8, "open": 3, "backlog": 27.3, "bc": 0, "bcRate": 0.0, "medRes": 19.6, "avgRes": 38.7, "p90Res": 102.4, "totRes": 310, "timeShare": 2.0, "share": 3.3}, {"name": "Phone Tree", "tickets": 11, "closed": 10, "open": 1, "backlog": 9.1, "bc": 1, "bcRate": 9.1, "medRes": 27.4, "avgRes": 97.8, "p90Res": 254.8, "totRes": 978, "timeShare": 6.3, "share": 3.3}, {"name": "Admin Portal", "tickets": 8, "closed": 8, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 32.7, "avgRes": 45.4, "p90Res": 108.4, "totRes": 363, "timeShare": 2.4, "share": 2.4}, {"name": "Integrations", "tickets": 6, "closed": 2, "open": 4, "backlog": 66.7, "bc": 0, "bcRate": 0.0, "medRes": 139.4, "avgRes": 139.4, "p90Res": 190.5, "totRes": 279, "timeShare": 1.8, "share": 1.8}, {"name": "Sound Clips", "tickets": 5, "closed": 4, "open": 1, "backlog": 20.0, "bc": 0, "bcRate": 0.0, "medRes": 62.6, "avgRes": 92.1, "p90Res": 146.5, "totRes": 368, "timeShare": 2.4, "share": 1.5}, {"name": "Hot Desking", "tickets": 4, "closed": 4, "open": 0, "backlog": 0.0, "bc": 1, "bcRate": 25.0, "medRes": 12.8, "avgRes": 11.4, "p90Res": 13.7, "totRes": 46, "timeShare": 0.3, "share": 1.2}, {"name": "Call Forwarding", "tickets": 3, "closed": 3, "open": 0, "backlog": 0.0, "bc": 1, "bcRate": 33.3, "medRes": 11.9, "avgRes": 84.5, "p90Res": 186.8, "totRes": 254, "timeShare": 1.6, "share": 0.9}, {"name": "Click to call (PMS)", "tickets": 3, "closed": 3, "open": 0, "backlog": 0.0, "bc": 3, "bcRate": 100.0, "medRes": 10.0, "avgRes": 47.9, "p90Res": 103.1, "totRes": 144, "timeShare": 0.9, "share": 0.9}, {"name": "Internal Ticket", "tickets": 3, "closed": 3, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 81.8, "avgRes": 93.7, "p90Res": 115.7, "totRes": 281, "timeShare": 1.8, "share": 0.9}, {"name": "Ring Group", "tickets": 3, "closed": 3, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 11.6, "avgRes": 12.0, "p90Res": 13.6, "totRes": 36, "timeShare": 0.2, "share": 0.9}, {"name": "Admin Users", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 81.0, "avgRes": 81.0, "p90Res": 138.3, "totRes": 162, "timeShare": 1.0, "share": 0.6}, {"name": "Bot Assisted Calls", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 106.2, "avgRes": 106.2, "p90Res": 128.0, "totRes": 212, "timeShare": 1.4, "share": 0.6}, {"name": "Click to Call (VS)", "tickets": 2, "closed": 1, "open": 1, "backlog": 50.0, "bc": 0, "bcRate": 0.0, "medRes": 35.1, "avgRes": 35.1, "p90Res": 35.1, "totRes": 35, "timeShare": 0.2, "share": 0.6}, {"name": "Contacts", "tickets": 2, "closed": 1, "open": 1, "backlog": 50.0, "bc": 0, "bcRate": 0.0, "medRes": 132.8, "avgRes": 132.8, "p90Res": 132.8, "totRes": 133, "timeShare": 0.9, "share": 0.6}, {"name": "Internal Calls", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 270.7, "avgRes": 270.7, "p90Res": 481.5, "totRes": 541, "timeShare": 3.5, "share": 0.6}, {"name": "Location Mode", "tickets": 2, "closed": 2, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 71.0, "avgRes": 71.0, "p90Res": 77.7, "totRes": 142, "timeShare": 0.9, "share": 0.6}, {"name": "Call Queue", "tickets": 1, "closed": 0, "open": 1, "backlog": 100.0, "bc": 0, "bcRate": 0.0, "medRes": null, "avgRes": null, "p90Res": null, "totRes": 0, "timeShare": 0.0, "share": 0.3}, {"name": "Call Scoring", "tickets": 1, "closed": 0, "open": 1, "backlog": 100.0, "bc": 0, "bcRate": 0.0, "medRes": null, "avgRes": null, "p90Res": null, "totRes": 0, "timeShare": 0.0, "share": 0.3}, {"name": "CareStack Query", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 13.3, "avgRes": 13.3, "p90Res": 13.3, "totRes": 13, "timeShare": 0.1, "share": 0.3}, {"name": "Conversation AI", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 27.1, "avgRes": 27.1, "p90Res": 27.1, "totRes": 27, "timeShare": 0.2, "share": 0.3}, {"name": "Conversation History", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 10.2, "avgRes": 10.2, "p90Res": 10.2, "totRes": 10, "timeShare": 0.1, "share": 0.3}, {"name": "DNI Campaigns", "tickets": 1, "closed": 0, "open": 1, "backlog": 100.0, "bc": 0, "bcRate": 0.0, "medRes": null, "avgRes": null, "p90Res": null, "totRes": 0, "timeShare": 0.0, "share": 0.3}, {"name": "Extensions", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 1, "bcRate": 100.0, "medRes": 9.5, "avgRes": 9.5, "p90Res": 9.5, "totRes": 10, "timeShare": 0.1, "share": 0.3}, {"name": "External Number", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 6.4, "avgRes": 6.4, "p90Res": 6.4, "totRes": 6, "timeShare": 0.0, "share": 0.3}, {"name": "Headphones", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 10.2, "avgRes": 10.2, "p90Res": 10.2, "totRes": 10, "timeShare": 0.1, "share": 0.3}, {"name": "IP Addresses", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 11.3, "avgRes": 11.3, "p90Res": 11.3, "totRes": 11, "timeShare": 0.1, "share": 0.3}, {"name": "Live Status", "tickets": 1, "closed": 0, "open": 1, "backlog": 100.0, "bc": 0, "bcRate": 0.0, "medRes": null, "avgRes": null, "p90Res": null, "totRes": 0, "timeShare": 0.0, "share": 0.3}, {"name": "Message Logs", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 171.4, "avgRes": 171.4, "p90Res": 171.4, "totRes": 171, "timeShare": 1.1, "share": 0.3}, {"name": "Outbound whisper", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 5.0, "avgRes": 5.0, "p90Res": 5.0, "totRes": 5, "timeShare": 0.0, "share": 0.3}, {"name": "Pause Recording", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 4.4, "avgRes": 4.4, "p90Res": 4.4, "totRes": 4, "timeShare": 0.0, "share": 0.3}, {"name": "Provisioning Profile", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 78.4, "avgRes": 78.4, "p90Res": 78.4, "totRes": 78, "timeShare": 0.5, "share": 0.3}, {"name": "Shared Voice Mailbox", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 37.1, "avgRes": 37.1, "p90Res": 37.1, "totRes": 37, "timeShare": 0.2, "share": 0.3}, {"name": "Workflow Rules", "tickets": 1, "closed": 1, "open": 0, "backlog": 0.0, "bc": 0, "bcRate": 0.0, "medRes": 517.8, "avgRes": 517.8, "p90Res": 517.8, "totRes": 518, "timeShare": 3.4, "share": 0.3}, {"name": "(Blank)", "tickets": 3, "closed": 0, "open": 3, "backlog": 100.0, "bc": 0, "bcRate": 0.0, "medRes": null, "avgRes": null, "p90Res": null, "totRes": 0, "timeShare": 0.0, "share": 0.9}];
+const ttypeData = [{"name": "Task", "tickets": 189, "closed": 177, "open": 12, "backlog": 6.3, "bc": 0, "bcRate": 0.0, "medRes": 12.9, "avgRes": 45.1, "p90Res": 125.6, "totRes": 7980, "timeShare": 51.7, "share": 57.3}, {"name": "Incident", "tickets": 55, "closed": 43, "open": 12, "backlog": 21.8, "bc": 16, "bcRate": 29.1, "medRes": 11.9, "avgRes": 57.5, "p90Res": 167.1, "totRes": 2473, "timeShare": 16.0, "share": 16.7}, {"name": "Question", "tickets": 45, "closed": 39, "open": 6, "backlog": 13.3, "bc": 1, "bcRate": 2.2, "medRes": 13.3, "avgRes": 73.3, "p90Res": 176.2, "totRes": 2858, "timeShare": 18.5, "share": 13.6}, {"name": "Problem", "tickets": 37, "closed": 30, "open": 7, "backlog": 18.9, "bc": 9, "bcRate": 24.3, "medRes": 13.9, "avgRes": 63.1, "p90Res": 159.9, "totRes": 1893, "timeShare": 12.3, "share": 11.2}, {"name": "(Blank)", "tickets": 4, "closed": 1, "open": 3, "backlog": 75.0, "bc": 0, "bcRate": 0.0, "medRes": 244.9, "avgRes": 244.9, "p90Res": 244.9, "totRes": 245, "timeShare": 1.6, "share": 1.2}];
+const monthData = [{"name": "Oct", "tickets": 330, "closed": 290, "open": 40, "backlog": 12.1, "bc": 26, "bcRate": 7.9, "medRes": 13.0, "avgRes": 53.3, "p90Res": 150.7, "totRes": 15448, "timeShare": 100.0, "share": 100.0}];
+const weeklyData = [{"label": "28 Sep", "tickets": 38, "open": 1, "medRes": 12.9}, {"label": "5 Oct", "tickets": 69, "open": 5, "medRes": 12.7}, {"label": "12 Oct", "tickets": 77, "open": 4, "medRes": 26.7}, {"label": "19 Oct", "tickets": 60, "open": 11, "medRes": 28.0}, {"label": "26 Oct", "tickets": 86, "open": 19, "medRes": 10.6}];
+const channelData = [{"name": "Email", "tickets": 125, "pct": 37.9}, {"name": "Voice", "tickets": 106, "pct": 32.1}, {"name": "WhatsApp", "tickets": 40, "pct": 12.1}, {"name": "Chat", "tickets": 39, "pct": 11.8}, {"name": "Web", "tickets": 20, "pct": 6.1}];
+const bucketAgentData = [{"name": "Advaith", "Configuration / Admin Service": 78, "Real Issue / Incident": 35, "Business Critical / Phone Impacting": 12, "How-to / Clarification / Training": 18, "Unclassified / Data Gap": 2, "Product / Commercial / Internal": 8, "Total": 153}, {"name": "Elsaba Jojo", "Configuration / Admin Service": 75, "Real Issue / Incident": 23, "Business Critical / Phone Impacting": 9, "How-to / Clarification / Training": 12, "Unclassified / Data Gap": 0, "Product / Commercial / Internal": 1, "Total": 120}, {"name": "Nikhil S Nair", "Configuration / Admin Service": 33, "Real Issue / Incident": 8, "Business Critical / Phone Impacting": 5, "How-to / Clarification / Training": 10, "Unclassified / Data Gap": 1, "Product / Commercial / Internal": 0, "Total": 57}];
+const agentBucketMed = [{"name": "Advaith", "Configuration / Admin Service": 10.7, "Real Issue / Incident": 10.8, "Business Critical / Phone Impacting": 10.4, "How-to / Clarification / Training": 27.1, "Unclassified / Data Gap": null, "Product / Commercial / Internal": 75.1}, {"name": "Elsaba Jojo", "Configuration / Admin Service": 30.2, "Real Issue / Incident": 32.3, "Business Critical / Phone Impacting": 37.2, "How-to / Clarification / Training": 79.1, "Unclassified / Data Gap": null, "Product / Commercial / Internal": null}, {"name": "Nikhil S Nair", "Configuration / Admin Service": 9.2, "Real Issue / Incident": 35.1, "Business Critical / Phone Impacting": 12.5, "How-to / Clarification / Training": 7.2, "Unclassified / Data Gap": null, "Product / Commercial / Internal": null}];
+const BUCKETS = ["Configuration / Admin Service", "Real Issue / Incident", "Business Critical / Phone Impacting", "How-to / Clarification / Training", "Unclassified / Data Gap", "Product / Commercial / Internal"];
+const MONTH_NAMES = {Jul:'July', Aug:'August', Sep:'September'};
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function pillHtml(val, lo, mid) {
+  if(val === null || val === undefined) return '—';
+  if(val >= mid) return `<span class="pill pill-red">${val}%</span>`;
+  if(val >= lo)  return `<span class="pill pill-amber">${val}%</span>`;
+  return `<span class="pill pill-green">${val}%</span>`;
+}
+function riskHtml(a) {
+  if(a.backlog > 30) return `<span class="pill pill-red">High</span>`;
+  if(a.backlog > 8 || a.p90Res > 168) return `<span class="pill pill-amber">Med</span>`;
+  return `<span class="pill pill-green">Low</span>`;
+}
+function statusHtml(a) {
+  if(a.medRes === null) return `<span class="pill pill-gray">No data</span>`;
+  if(a.medRes > 24 || a.backlog > 20) return `<span class="pill pill-red">Action Needed</span>`;
+  if(a.medRes > 8 || a.p90Res > 168 || a.backlog > 10) return `<span class="pill pill-amber">Monitor</span>`;
+  return `<span class="pill pill-green">On Track</span>`;
+}
+function dur(v) { return v < 48 ? Number(v).toFixed(1)+'h' : (v/24).toFixed(1)+'d'; }
+function fmt(v) { return v === null || v === undefined ? '—' : dur(v); }
+function hrsCell(v) {
+  if(v === null || v === undefined) return '<td class="num">—</td>';
+  const st = v > 50 ? 'style="color:var(--red);font-weight:700;"' : v > 20 ? 'style="color:#B45309;font-weight:600;"' : '';
+  return `<td class="num" ${st}>${dur(v)}</td>`;
+}
+function buildProgressBars(id, rows, maxVal) {
+  const el = document.getElementById(id);
+  el.innerHTML = rows.map(r => {
+    const pct = Math.min(r.value / maxVal * 100, 100);
+    const cls = r.value >= 30 ? 'red' : r.value >= 10 ? 'amber' : '';
+    return `<div class="progress-row">
+      <div class="progress-label" title="${r.label}">${r.label}</div>
+      <div class="progress-bar-wrap"><div class="progress-bar ${cls}" style="width:${pct}%"></div></div>
+      <div class="progress-val">${r.value}%</div>
+    </div>`;
+  }).join('');
+}
+const fill = (id, rows) => document.getElementById(id).innerHTML = rows.join('');
+
+// ─── TABLES ──────────────────────────────────────────────────────────────────
+
+fill('bucketTableBody', bucketData.map(b => `<tr>
+  <td class="name">${b.name}</td>
+  <td class="num">${b.tickets}</td><td class="num">${b.closed}</td><td class="num">${b.open}</td>
+  <td class="num">${pillHtml(b.backlog,10,25)}</td>
+  <td class="num"><span class="pill pill-violet">${b.share}%</span></td>
+  <td class="num"><span class="pill pill-violet">${b.timeShare}%</span></td>
+  ${hrsCell(b.medRes)}<td class="num">${fmt(b.p90Res)}</td>
+</tr>`));
+
+fill('bucketAgentTableBody', bucketAgentData.map(a => `<tr>
+  <td class="name">${a.name}</td>
+  <td class="num">${a['Configuration / Admin Service']}</td>
+  <td class="num">${a['Real Issue / Incident']}</td>
+  <td class="num">${a['Business Critical / Phone Impacting']}</td>
+  <td class="num">${a['How-to / Clarification / Training']}</td>
+  <td class="num">${a['Product / Commercial / Internal']}</td>
+  <td class="num">${a['Unclassified / Data Gap']}</td>
+  <td class="num" style="font-weight:700;">${a.Total}</td>
+</tr>`));
+
+fill('agentTableBody', agentData.map(a => `<tr>
+  <td class="name">${a.name}</td>
+  <td class="num">${a.tickets}</td><td class="num">${a.closed}</td><td class="num">${a.open}</td>
+  <td class="num">${pillHtml(a.backlog,2,10)}</td>
+  <td class="num">${a.bc}</td>
+  <td class="num">${pillHtml(a.bcRate,10,20)}</td>
+  ${hrsCell(a.medRes)}
+  <td class="num">${fmt(a.avgRes)}</td><td class="num">${fmt(a.p90Res)}</td>
+  <td class="num">${a.timeShare}%</td>
+  <td>${statusHtml(a)}</td>
+</tr>`));
+
+fill('openTableBody', openData.map(t => `<tr>
+  <td class="name">#${t.id}</td><td>${t.org}</td><td>${t.owner}</td>
+  <td><span class="pill ${t.status==='Open'?'pill-red':'pill-amber'}">${t.status}</span></td>
+  <td>${t.cat}</td><td>${t.feat}</td><td class="num">${t.created}</td>
+  <td class="num">${t.age.toFixed(1)} days</td>
+</tr>`));
+fill('longTableBody', longData.map(t => `<tr>
+  <td class="name">#${t.id}</td><td>${t.org}</td><td>${t.owner}</td><td>${t.bucket}</td>
+  <td>${t.cat}</td><td>${t.feat}</td>
+  <td class="num" style="color:var(--red);font-weight:700;">${t.days.toFixed(1)} days</td>
+</tr>`));
+const MED_COLS=['Configuration / Admin Service','Real Issue / Incident','Business Critical / Phone Impacting','How-to / Clarification / Training','Unclassified / Data Gap','Product / Commercial / Internal'];
+fill('agentBucketMedBody', agentBucketMed.map(a => `<tr><td class="name">${a.name}</td>${MED_COLS.map(c=>hrsCell(a[c])).join('')}</tr>`));
+
+fill('accountTableBody', accountData.slice(0,20).map(a => `<tr>
+  <td class="name">${a.name}</td>
+  <td class="num">${a.tickets}</td><td class="num">${a.open}</td>
+  <td class="num">${a.bc}</td>
+  <td class="num">${pillHtml(a.backlog,8,30)}</td>
+  <td class="num">${fmt(a.medRes)}</td>
+  <td class="num" ${a.avgRes>100?'style="color:var(--red);font-weight:700;"':''}>${fmt(a.avgRes)}</td>
+  <td class="num">${fmt(a.p90Res)}</td>
+  <td>${riskHtml(a)}</td>
+</tr>`));
+
+fill('srtTableBody', categoryData.map(r => `<tr>
+  <td class="name">${r.name}</td>
+  <td class="num">${r.tickets}</td><td class="num">${r.open}</td>
+  <td class="num">${pillHtml(r.backlog,10,25)}</td>
+  ${hrsCell(r.medRes)}<td class="num">${fmt(r.p90Res)}</td>
+  <td class="num">${r.timeShare}%</td>
+</tr>`));
+
+fill('featureTableBody', featureData.slice(0,20).map(r => `<tr>
+  <td class="name">${r.name}</td><td class="num">${r.tickets}</td><td class="num">${r.open}</td>
+  ${hrsCell(r.medRes)}<td class="num">${fmt(r.p90Res)}</td>
+</tr>`));
+
+fill('ttypeTableBody', ttypeData.map(r => `<tr>
+  <td class="name">${r.name}</td><td class="num">${r.tickets}</td><td class="num">${r.open}</td>
+  ${hrsCell(r.medRes)}<td class="num">${fmt(r.p90Res)}</td>
+</tr>`));
+
+fill('channelTableBody', channelData.map(c => `<tr>
+  <td class="name">${c.name}</td><td class="num">${c.tickets}</td>
+  <td class="num"><span class="pill pill-violet">${c.pct}%</span></td>
+</tr>`));
+
+buildProgressBars('accountBacklogBars',
+  accountData.filter(a => a.backlog > 0).sort((a,b) => b.backlog - a.backlog || b.open - a.open)
+    .map(a => ({label:`${a.name} (${a.open}/${a.tickets} open)`, value:a.backlog})), 100);
+
+// ─── CHARTS ──────────────────────────────────────────────────────────────────
+if (window.Chart) {
+Chart.defaults.font.family="'Inter',system-ui,sans-serif";
+Chart.defaults.color=cssVar('--gray-500')||'#6B7280';
+Chart.defaults.plugins.legend.labels.boxWidth=12;
+Chart.defaults.plugins.legend.labels.padding=16;
+const hbar=(id,labels,data,colors,borders,xTitle)=>new Chart(document.getElementById(id),{
+  type:'bar',
+  data:{labels, datasets:[{data, backgroundColor:colors, borderColor:borders, borderWidth:1, borderRadius:4}]},
+  options:{indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+    scales:{x:{grid:{color:GRID}, title:{display:!!xTitle, text:xTitle}}, y:{grid:{display:false}, ticks:{font:{size:11}}}}}
+});
+
+new Chart(document.getElementById('weeklyChart'), {
+  type:'bar',
+  data:{
+    labels: ['1–4 Oct','5–11 Oct','12–18 Oct','19–25 Oct','26–31 Oct'],
+    datasets:[
+      {label:'Tickets', data:weeklyData.map(w=>w.tickets), backgroundColor:VS+'22', borderColor:VS, borderWidth:2, borderRadius:4, order:2},
+      {label:'Open Backlog', data:weeklyData.map(w=>w.open), type:'line', borderColor:RED, backgroundColor:RED+'22', borderWidth:2, pointBackgroundColor:RED, pointRadius:4, tension:0.3, fill:true, order:1, yAxisID:'y1'}
+    ]
+  },
+  options:{responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'top'}, tooltip:{mode:'index'}},
+    scales:{x:{grid:{display:false}}, y:{title:{display:true,text:'Tickets'}, grid:{color:GRID}},
+      y1:{position:'right', title:{display:true,text:'Open Backlog'}, grid:{display:false}, ticks:{color:RED, precision:0}}}}
+});
+
+new Chart(document.getElementById('bucketDonut'), {
+  type:'doughnut',
+  data:{labels: bucketData.map(b=>b.name),
+    datasets:[{data:bucketData.map(b=>b.tickets), backgroundColor:['#4A3CE1','#A49DF0','#EF4444','#C9C4F6','#F59E0B','#E4E2FB'], borderWidth:2, borderColor:cssVar('--surface')||'#fff'}]},
+  options:{responsive:true, maintainAspectRatio:false, cutout:'62%',
+    plugins:{legend:{position:'right', labels:{font:{size:11}}},
+      tooltip:{callbacks:{label:ctx=>{const tot=bucketData.reduce((s,b)=>s+b.tickets,0); return ` ${ctx.label}: ${ctx.parsed} (${(ctx.parsed/tot*100).toFixed(1)}%)`;}}}}}
+});
+
+new Chart(document.getElementById('agentVolumeChart'), {
+  type:'bar',
+  data:{labels: agentData.map(a=>a.name),
+    datasets:[
+      {label:'Closed', data:agentData.map(a=>a.closed), backgroundColor:VS+'99', borderRadius:3, stack:'s'},
+      {label:'Open',   data:agentData.map(a=>a.open),   backgroundColor:RED+'cc', borderRadius:3, stack:'s'}
+    ]},
+  options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'top'}},
+    scales:{x:{stacked:true, grid:{display:false}}, y:{stacked:true, grid:{color:GRID}}}}
+});
+
+const names=agentData.map(a=>a.name);
+hbar('agentBacklogChart', names, agentData.map(a=>a.backlog),
+  agentData.map(a=>a.backlog>10?RED+'cc':a.backlog>2?AMB+'cc':GRN+'99'),
+  agentData.map(a=>a.backlog>10?RED:a.backlog>2?AMB:GRN), 'Backlog %');
+hbar('agentMedianChart', names, agentData.map(a=>a.medRes||0),
+  agentData.map(a=>a.medRes>20?RED+'cc':a.medRes>5?AMB+'cc':VS+'99'),
+  agentData.map(a=>a.medRes>20?RED:a.medRes>5?AMB:VS), 'Hours');
+hbar('agentCriticalChart', names, agentData.map(a=>a.bcRate),
+  agentData.map(a=>a.bcRate>20?RED+'cc':a.bcRate>10?AMB+'cc':VS50+'99'),
+  agentData.map(a=>a.bcRate>20?RED:a.bcRate>10?AMB:VS50), 'Business Critical %');
+
+const top15=accountData.slice(0,15);
+new Chart(document.getElementById('accountVolumeChart'), {
+  type:'bar',
+  data:{labels: top15.map(a=>a.name),
+    datasets:[
+      {label:'Closed', data:top15.map(a=>a.tickets-a.open), backgroundColor:VS+'99', borderRadius:3, stack:'s'},
+      {label:'Open',   data:top15.map(a=>a.open), backgroundColor:RED+'cc', borderRadius:3, stack:'s'}
+    ]},
+  options:{indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'top'}},
+    scales:{x:{stacked:true, grid:{color:GRID}}, y:{stacked:true, grid:{display:false}, ticks:{font:{size:11}}}}}
+});
+
+const cat12=categoryData.slice(0,12);
+hbar('requestTypeChart', cat12.map(r=>r.name), cat12.map(r=>r.tickets),
+  cat12.map(r=>r.backlog>10?RED+'99':VS+'99'), cat12.map(r=>r.backlog>10?RED:VS));
+const f12=featureData.slice(0,12);
+hbar('featureChart', f12.map(f=>f.name), f12.map(f=>f.tickets),
+  f12.map(f=>f.backlog>10?RED+'99':VS+'99'), f12.map(f=>f.backlog>10?RED:VS));
+}
+
+// restore last tab
+try {
+  const t = sessionStorage.getItem('octtab');
+  if (t && document.getElementById('tab-'+t)) {
+    const btn=[...document.querySelectorAll('.tab-btn')].find(b=>b.getAttribute('onclick').includes("'"+t+"'"));
+    if (btn) switchTab(t, btn);
+  }
+} catch(e) {}
+</script>
+</body>
+</html>
